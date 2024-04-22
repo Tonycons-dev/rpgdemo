@@ -43,8 +43,8 @@ public class Driver extends JFrame{
 		
 		setTitle("Game"); 
 		setSize(screenWidth, screenHeight);
-		setUndecorated(true);
-		setResizable(false); 
+		setUndecorated(false);
+		setResizable(false);
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		//device.setFullScreenWindow(this);
@@ -60,13 +60,13 @@ public class Driver extends JFrame{
 	                         (int) (imageSize.height * ratio));
 	}
 	
-public static void main(String[] args) 
-{
-	EventQueue.invokeLater(() -> 
+	public static void main(String[] args)
 	{
-		Driver driver = new Driver(); 
-		driver.setVisible(true); 
-	});  
-}
+		EventQueue.invokeLater(() ->
+		{
+			Driver driver = new Driver();
+			driver.setVisible(true);
+		});
+	}
 }
 

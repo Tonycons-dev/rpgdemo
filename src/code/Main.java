@@ -75,8 +75,8 @@ public Main(int scaleWidth, int scaleHeight, int screenWidth, int screenHeight)
 	initialX = PLAYER_X; 
 	initialY = PLAYER_Y;
 		
-	Item.NewItem(1, 0);
-	Item.NewItem(2, 1);
+	Inventory.newItem(1, 0);
+	Inventory.newItem(2, 1);
 		
 	timer = new Timer(DELAY, this);
 	timer.start();
@@ -248,31 +248,29 @@ public void paintComponent(Graphics g)
 	{
 		//Draw on screen the first item 
 		//in the player's slot when used
-		
-		if(player.usedItemSlot() == 0)		
-		if(Item.getInventoryItem(0) != null) 
+
+		if(player.usedItemSlot() == 0 && Inventory.getItem(0) != null)
 		{
-			Item t = Item.getInventoryItem(0);
-			
+			Item t = Inventory.getItem(0);
+
 			buffer.rotate(
 				Math.toRadians(t.getDirection()),
-				t.getX() + t.getWidth() / 2,
-				t.getY() + t.getHeight() / 2);
-					
+				t.getX() + t.getWidth() / 2.0,
+				t.getY() + t.getHeight() / 2.0);
+
 			buffer.drawImage(t.getImage(), (int)t.getX(), (int)t.getY(), this);
 		}
 		
 		buffer.setTransform(oldTransform);
-		
-		if(player.usedItemSlot() == 1)
-		if(Item.getInventoryItem(1) != null) 
+
+		if(player.usedItemSlot() == 1 && Inventory.getItem(1) != null)
 		{
-			Item t = Item.getInventoryItem(1);
+			Item t = Inventory.getItem(1);
 			
 			buffer.rotate(
 				Math.toRadians(t.getDirection()),
-				t.getX() + t.getWidth() / 2, 
-				t.getY() + t.getHeight() / 2);
+				t.getX() + t.getWidth() / 2.0,
+				t.getY() + t.getHeight() / 2.0);
 					
 			buffer.drawImage(t.getImage(), (int)t.getX(), (int)t.getY(), this);
 		}
@@ -282,8 +280,8 @@ public void paintComponent(Graphics g)
 		//Rotate and draw player
 		
 		buffer.rotate(Math.toRadians(player.getDirection()), 
-				player.getX() + player.getWidth() / 2, 
-				player.getY() + player.getHeight() / 2);
+				player.getX() + player.getWidth() / 2.0,
+				player.getY() + player.getHeight() / 2.0);
 		
 		buffer.drawImage(player.getImage(), 
 				(int)player.getX(), (int)player.getY(), this);
@@ -326,7 +324,7 @@ public void paintComponent(Graphics g)
 		if(player.isUsingItem()) {
 			
 			//Check if the item is hitting the entity
-			Item item = Item.getInventoryItem(player.usedItemSlot());
+			Item item = Inventory.getItem(player.usedItemSlot());
 			Rectangle itemHitbox = item.getBounds();
 			
 			if(itemHitbox.intersects(entityHitbox)) {
@@ -338,7 +336,7 @@ public void paintComponent(Graphics g)
 	}	
 	
 	buffer.setTransform(oldTransform);
-	Generator.update(buffer);
+	ParticleGenerator.update(buffer);
 	
 	if(Menu.isVisible()) 
 	{
@@ -346,11 +344,11 @@ public void paintComponent(Graphics g)
 		buffer.drawImage(Menu.closedInventory(), 
 			(int)Menu.getX(), (int)Menu.getY(), this);
 		
-		if(Item.getInventoryItem(0) != null)
-			buffer.drawImage(Item.getInventoryItem(0).getImage(), 80, 432, this);
+		if(Inventory.getItem(0) != null)
+			buffer.drawImage(Inventory.getItem(0).getImage(), 80, 432, this);
 		
-		if(Item.getInventoryItem(1) != null)
-			buffer.drawImage(Item.getInventoryItem(1).getImage(), 130, 432, this);
+		if(Inventory.getItem(1) != null)
+			buffer.drawImage(Inventory.getItem(1).getImage(), 130, 432, this);
 			
 		buffer.setColor(Color.BLACK);
 		
@@ -374,7 +372,7 @@ public void paintComponent(Graphics g)
 		}
 		
 		if(player.isInventoryOpen())
-			Item.updateGUI(buffer);
+			Inventory.updateGUI(buffer);
 	}
 	
 	//Render buffer
@@ -424,7 +422,7 @@ public void checkCollisions()
 			
 		if(tile.getType() == 11) 
 		{
-			Generator.addParticle(
+			ParticleGenerator.add(
 				(int)(tile.getTX() + player.getScrollX()), 
 				(int)(tile.getTY() + player.getScrollY()), 1, 0);
 		}
@@ -597,29 +595,28 @@ private void updateEntities()
 	}
 }
 	
-private void updateItem() 
-{
-	if(player.isUsingItem())
+	private void updateItem()
 	{
-		Item.use(
-			player.getX(), player.getY(), player.getWidth(), player.getHeight(), 
-			player.getDirection(), player.usedItemSlot());
+		if (player.isUsingItem()) {
+			Inventory.useItem(
+				player.getX(), player.getY(), player.getWidth(), player.getHeight(),
+				player.getDirection(), player.usedItemSlot());
+		}
+		if (player.isInventoryOpen()) {
+			Inventory.updateCursor();
+		}
 	}
-	if(player.isInventoryOpen())
-		Item.updateCursor();
-}
 	
-private class Adapter extends KeyAdapter
-{
-	@Override
-	public void keyReleased(KeyEvent e) {
-		player.keyReleased(e);
-		Item.keyReleased(e);
+	private class Adapter extends KeyAdapter
+	{
+		@Override
+		public void keyReleased(KeyEvent e) {
+			player.keyReleased(e);
+		}
+		@Override
+		public void keyPressed(KeyEvent e) {
+			player.keyPressed(e);
+			Inventory.keyPressed(e);
+		}
 	}
-	@Override
-	public void keyPressed(KeyEvent e) {
-		player.keyPressed(e);
-		Item.keyPressed(e);
-	}
-}
 }

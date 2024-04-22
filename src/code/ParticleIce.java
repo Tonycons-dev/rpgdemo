@@ -1,6 +1,11 @@
 package code;
 
+import javax.swing.*;
+
 public class ParticleIce extends Particle{
+
+	private static final ImageIcon iceParticle = new ImageIcon(folder + "iceparticle.png");
+	private static final ImageIcon iceParticle2 = new ImageIcon(folder + "iceparticle2.png");
 
 	public ParticleIce(int x, int y, int lifespan) {
 		super(x, y, lifespan);
@@ -21,7 +26,6 @@ public class ParticleIce extends Particle{
 		if(lifespan < 13) {
 			useImage(iceParticle2);
 		}
-		
 	}
 
 }

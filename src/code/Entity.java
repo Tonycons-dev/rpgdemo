@@ -60,7 +60,7 @@ public abstract class Entity extends Sprite{
 			setHP(amount);
 			invframe = item.getInvTime();
 			//Spawns particles on death
-			Generator.addParticle((int)(x + offsetX), (int)(y + offsetY), 3, 2);
+			ParticleGenerator.add((int)(x + offsetX), (int)(y + offsetY), 3, 2);
 		}
 		else {
 			invframe--;
@@ -73,7 +73,7 @@ public abstract class Entity extends Sprite{
 		}
 		if(hp < 1) {
 			dead = true;
-			Generator.addParticle((int)(x + offsetX), (int)(y + offsetY), 10, 1);
+			ParticleGenerator.add((int)(x + offsetX), (int)(y + offsetY), 10, 1);
 		}
 	}
 	

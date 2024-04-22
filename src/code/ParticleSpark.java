@@ -1,6 +1,22 @@
 package code;
 
+import javax.swing.*;
+
 public class ParticleSpark extends Particle{
+
+	private static final ImageIcon sparkParticle;
+	private static final ImageIcon sparkParticle2;
+	private static final ImageIcon sparkParticle3;
+	private static final ImageIcon sparkParticle4;
+	private static final ImageIcon sparkParticle5;
+
+	static {
+		sparkParticle = new ImageIcon(folder + "sparkparticle.png");
+		sparkParticle2 = new ImageIcon(folder + "sparkparticle2.png");
+		sparkParticle3 = new ImageIcon(folder + "sparkparticle3.png");
+		sparkParticle4 = new ImageIcon(folder + "sparkparticle4.png");
+		sparkParticle5 = new ImageIcon(folder + "sparkparticle5.png");
+	}
 
 	public ParticleSpark(int x, int y, int lifespan) {
 		super(x, y, lifespan);

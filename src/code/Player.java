@@ -3,282 +3,290 @@ import java.awt.event.KeyEvent;
 import javax.swing.ImageIcon;
 
 
-public class Player extends Sprite
-{
-		
-private byte item;
-private boolean interact;
-private boolean moving;
-private boolean forward;
-private boolean backward;
-private boolean use;
-private boolean left;
-private boolean right;
-private boolean strafe;
-private boolean inventoryOpen;
-	
-private boolean upArrow;
-private boolean downArrow;
-private boolean enterKey;
-private boolean allowEnter;
-	
-private double scrollX;
-private double scrollY;
-private int scrollingMode;
-private int hp;
-private int maxHp;
-private int invframe;
-private boolean hit;
-	
-private boolean hScrollEnabled;
-private boolean vScrollEnabled;
-private boolean hLineCrossed;
-private boolean vLineCrossed;
-	
-ImageIcon playerIdle 
-	= new ImageIcon(folder+"Player_Idle.png");
+public class Player extends Sprite {
 
-ImageIcon playerMoving 
-	= new ImageIcon(folder+"Player_Moving.gif");
-
-ImageIcon playerAttack 
-	= new ImageIcon(folder+"Player_Attack.png");
-
-ImageIcon playerMovingAttack 
-	= new ImageIcon(folder+"Player_Attack_Moving.gif");
+	private static final ImageIcon playerIdle;
+	private static final ImageIcon playerMoving;
+	private static final ImageIcon playerAttack;
+	private static final ImageIcon playerMovingAttack;
+	private byte item;
+	private boolean interact;
+	private boolean moving;
+	private boolean forward;
+	private boolean backward;
+	private boolean use;
+	private boolean left;
+	private boolean right;
+	private boolean strafe;
+	private boolean inventoryOpen;
+	private boolean upArrow;
+	private boolean downArrow;
+	private boolean enterKey;
+	private boolean allowEnter;
+	private double scrollX;
+	private double scrollY;
+	private int scrollingMode;
+	private int hp;
+	private int maxHp;
+	private int invframe;
+	private boolean hit;
+	private boolean hScrollEnabled;
+	private boolean vScrollEnabled;
+	private boolean hLineCrossed;
+	private boolean vLineCrossed;
 
 
-public Player(int x, int y) 
-{
-	super(x, y);
-	
-	colliding      = false;
-	moving 	       = false;
-	direction      = 0;
-	moveSpeed      = 1.5;
-	rotationSpeed  = 3;
-	item           = 0;
-	hp             = 50;
-	maxHp          = 50;
-	invframe       = 100;
-	hit            = false;
-	use            = false;
-	interact       = false;
-	hScrollEnabled = false;
-	vScrollEnabled = false;
-	hLineCrossed   = false;
-	vLineCrossed   = false;
-	scrollX        = 0; 
-	scrollY        = 0;
-	upArrow        = false;
-	downArrow      = false;
-	enterKey       = false;
-	
-	useImage(playerIdle);
-	getImageDimensions();
-}
-	
-public void move() 
-{
-	if(moving){ 
-	if(forward && !colliding) 
-	{
-		moveX = moveSpeed * Math.cos(Math.toRadians(direction));
-		moveY = moveSpeed * Math.sin(Math.toRadians(direction));
-		
-		oldX = moveX * -1.0; 
-		oldY = moveY * -1.0;
-		
-		if(hScrollEnabled && vLineCrossed)
-			scrollX -= moveX;
-		else
-			x += moveX;
-		
-		if(vScrollEnabled && hLineCrossed)
-			scrollY -= moveY;
-		else
-			y += moveY;
+	static {
+		playerIdle = new ImageIcon(folder+"Player_Idle.png");
+		playerMoving = new ImageIcon(folder+"Player_Moving.gif");
+		playerAttack = new ImageIcon(folder+"Player_Attack.png");
+		playerMovingAttack = new ImageIcon(folder+"Player_Attack_Moving.gif");
 	}
-	if(backward && !colliding) 
-	{
-		moveX = moveSpeed * Math.cos(Math.toRadians(direction)) * -1.0;
-		moveY = moveSpeed * Math.sin(Math.toRadians(direction)) * -1.0;
-		
-		oldX = moveX * -1.0; 
-		oldY = moveY * -1.0;
-		
-		if(hScrollEnabled && vLineCrossed)
-			scrollX -= moveX;
-		else
-			x += moveX;
-		
-		if(vScrollEnabled && hLineCrossed)
-			scrollY -= moveY;
-		else
-			y += moveY;
-	}
-	if(left) {	
-	if(strafe && !forward && !backward) 
-	{
-		moveX = moveSpeed * Math.cos(Math.toRadians(direction + 90)) * -1.0;
-		moveY = moveSpeed * Math.sin(Math.toRadians(direction + 90)) * -1.0;
-		
-		oldX = moveX * -1.0; 
-		oldY = moveY * -1.0;
-		
-		if(hScrollEnabled && vLineCrossed)
-			scrollX -= moveX;
-		else
-			x += moveX;
-		if(vScrollEnabled && hLineCrossed)
-			scrollY -= moveY;
-		else
-			y += moveY;
-	}
-	else 
-	{
-		if(direction == 360)
-			direction = 0;
-		else
-			direction -= rotationSpeed; 
-	}
-	}
-	if(right) {
-	if(strafe && !forward && !backward) 
-	{
-		moveX = moveSpeed * Math.cos(Math.toRadians(direction - 90)) * -1.0;
-		moveY = moveSpeed * Math.sin(Math.toRadians(direction - 90)) * -1.0;
-		
-		oldX = moveX * -1.0; 
-		oldY = moveY * -1.0;
-		
-		if(hScrollEnabled && vLineCrossed)
-			scrollX -= moveX;
-		else
-			x += moveX;
-		if(vScrollEnabled && hLineCrossed)
-			scrollY -= moveY;
-		else
-			y += moveY;
-	}
-	else 
-	{	
-		if(direction == 360)
-			direction = 0;
-		else 
-			direction += rotationSpeed; 
-	}
-	}
-	if(use)
-		useImage(playerMovingAttack);
-	else
-		useImage(playerMoving);
+
+	public Player(int x, int y) {
+		super(x, y);
+
+		colliding      = false;
+		moving 	       = false;
+		direction      = 0;
+		moveSpeed      = 1.5;
+		rotationSpeed  = 3;
+		item           = 0;
+		hp             = 50;
+		maxHp          = 50;
+		invframe       = 100;
+		hit            = false;
+		use            = false;
+		interact       = false;
+		hScrollEnabled = false;
+		vScrollEnabled = false;
+		hLineCrossed   = false;
+		vLineCrossed   = false;
+		scrollX        = 0;
+		scrollY        = 0;
+		upArrow        = false;
+		downArrow      = false;
+		enterKey       = false;
+
+		useImage(playerIdle);
 		getImageDimensions();
 	}
 	
-	if(!left && !right && !forward && !backward) 
+	public void move() {
+		if(moving) {
+			if(forward && !colliding) {
+				moveX = moveSpeed * Math.cos(Math.toRadians(direction));
+				moveY = moveSpeed * Math.sin(Math.toRadians(direction));
+
+				oldX = moveX * -1.0;
+				oldY = moveY * -1.0;
+
+				if(hScrollEnabled && vLineCrossed)
+					scrollX -= moveX;
+				else
+					x += moveX;
+
+				if(vScrollEnabled && hLineCrossed)
+					scrollY -= moveY;
+				else
+					y += moveY;
+			}
+			if(backward && !colliding) {
+				moveX = moveSpeed * Math.cos(Math.toRadians(direction)) * -1.0;
+				moveY = moveSpeed * Math.sin(Math.toRadians(direction)) * -1.0;
+
+				oldX = moveX * -1.0;
+				oldY = moveY * -1.0;
+
+				if(hScrollEnabled && vLineCrossed)
+					scrollX -= moveX;
+				else
+					x += moveX;
+
+				if(vScrollEnabled && hLineCrossed)
+					scrollY -= moveY;
+				else
+					y += moveY;
+			}
+			if(left && strafe && !forward && !backward)
+			{
+				moveX = moveSpeed * Math.cos(Math.toRadians(direction + 90)) * -1.0;
+				moveY = moveSpeed * Math.sin(Math.toRadians(direction + 90)) * -1.0;
+
+				oldX = moveX * -1.0;
+				oldY = moveY * -1.0;
+
+				if(hScrollEnabled && vLineCrossed)
+					scrollX -= moveX;
+				else
+					x += moveX;
+				if(vScrollEnabled && hLineCrossed)
+					scrollY -= moveY;
+				else
+					y += moveY;
+			}
+			else if (left)
+			{
+				if(direction == 360)
+					direction = 0;
+				else
+					direction -= rotationSpeed;
+			}
+			if(right && strafe && !forward && !backward) {
+					moveX = moveSpeed * Math.cos(Math.toRadians(direction - 90)) * -1.0;
+					moveY = moveSpeed * Math.sin(Math.toRadians(direction - 90)) * -1.0;
+
+					oldX = moveX * -1.0;
+					oldY = moveY * -1.0;
+
+					if(hScrollEnabled && vLineCrossed)
+						scrollX -= moveX;
+					else
+						x += moveX;
+
+					if(vScrollEnabled && hLineCrossed)
+						scrollY -= moveY;
+					else
+						y += moveY;
+			}
+			else if (right) {
+				if(direction == 360)
+					direction = 0;
+				else
+					direction += rotationSpeed;
+			}
+			if(use)
+				useImage(playerMovingAttack);
+			else
+				useImage(playerMoving);
+		}
+
+		if(!left && !right && !forward && !backward)
+		{
+			if(use)
+				useImage(playerAttack);
+			else
+				useImage(playerIdle);
+		}
+	}
+	
+	public void keyPressed(KeyEvent e)
 	{
-		if(use)
-			useImage(playerAttack);
-		else
-			useImage(playerIdle);
-		getImageDimensions();
-	}
-}
-	
-public void keyPressed(KeyEvent e) 
-{
-	int key = e.getKeyCode();
-	if(key == KeyEvent.VK_W) {
-		forward = true;
-		moving = true;
-	}
-		
-	if(key == KeyEvent.VK_S) {
-		backward = true;
-		moving = true;
-	}
-		
-	if(key == KeyEvent.VK_D) {
-		right = true;
-		moving = true;
-	}	
-		
-	if(key == KeyEvent.VK_A) {
-		left = true;
-		moving = true;
-	}
-		
-	if(key == KeyEvent.VK_F) {
-		interact = true;
-	}
-		
-	if(key == KeyEvent.VK_SPACE) {
-		item = 0; use = true;
-	}
-	
-	if(key == KeyEvent.VK_SHIFT) {
-		item = 1; use = true;
-	}
-	if(key == KeyEvent.VK_ESCAPE) {
-		inventoryOpen = true;
-	}
-	if(key == KeyEvent.VK_UP) {
-		upArrow = true;
-	}
-	if(key == KeyEvent.VK_DOWN) {
-		downArrow = true;
-	}
-	if(key == KeyEvent.VK_ENTER && allowEnter) {
-		enterKey = true;
-	}
-	if(key == KeyEvent.VK_CONTROL) {
-		strafe = true;
-	}
+		// FIXED: Upgraded to switch statements
+		switch (e.getKeyCode()) {
+		case KeyEvent.VK_W:
+			forward = true;
+			moving = true;
+			break;
+
+		case KeyEvent.VK_S:
+			backward = true;
+			moving = true;
+			break;
+
+		case KeyEvent.VK_D:
+			right = true;
+			moving = true;
+			break;
+
+		case KeyEvent.VK_A:
+			left = true;
+			moving = true;
+			break;
+
+		case KeyEvent.VK_F:
+			interact = true;
+			break;
+
+		case KeyEvent.VK_SPACE:
+			item = 0;
+			use = true;
+			break;
+
+		case KeyEvent.VK_SHIFT:
+			item = 1;
+			use = true;
+			break;
+
+		case KeyEvent.VK_ESCAPE:
+			inventoryOpen = true;
+			break;
+
+		case KeyEvent.VK_UP:
+			upArrow = true;
+			break;
+
+		case KeyEvent.VK_DOWN:
+			downArrow = true;
+			break;
+
+		case KeyEvent.VK_ENTER:
+			if (allowEnter)
+				enterKey = true;
+			break;
+
+		case KeyEvent.VK_CONTROL:
+			strafe = true;
+			break;
+		}
 	}
 	
 	public void keyReleased(KeyEvent e) {
-	int key = e.getKeyCode();
-	if(key == KeyEvent.VK_W) {
-		moving = false;
-		forward = false;
-	}
-	if(key == KeyEvent.VK_S) {
-		moving = false;
-		backward = false;
-	}
-    if(key == KeyEvent.VK_D) {
-    	right = false;
-    }
-    if(key == KeyEvent.VK_A) {
-    	left = false;
-    }
-	if(key == KeyEvent.VK_F) {
-		interact = false;
-	}
-	if(key == KeyEvent.VK_SPACE) {
-		item = 2; use = false;
-	}
-	if(key == KeyEvent.VK_SHIFT) {
-		item = 2; use = false;
-	}
-	if(key == KeyEvent.VK_ESCAPE) {
-		inventoryOpen = false;
-	}
-	if(key == KeyEvent.VK_UP) {
-		upArrow = false;
-	}
-	if(key == KeyEvent.VK_DOWN) {
-		downArrow = false;
-	}
-	if(key == KeyEvent.VK_ENTER) {
-		enterKey = false;
-		if(!allowEnter)
-			allowEnter = true;
-	}
-	if(key == KeyEvent.VK_CONTROL) {
-		strafe = false;
-	}
+
+		switch (e.getKeyCode()) {
+		case KeyEvent.VK_W:
+			moving = false;
+			forward = false;
+			break;
+
+		case KeyEvent.VK_S:
+			moving = false;
+			backward = false;
+			break;
+
+		case KeyEvent.VK_D:
+			right = false;
+			break;
+
+		case KeyEvent.VK_A:
+			left = false;
+			break;
+
+		case KeyEvent.VK_F:
+			interact = false;
+			break;
+
+		case KeyEvent.VK_SPACE:
+			item = 2;
+			use = false;
+			break;
+
+		case KeyEvent.VK_SHIFT:
+			item = 2;
+			use = false;
+			break;
+
+		case KeyEvent.VK_ESCAPE:
+			inventoryOpen = false;
+			break;
+
+		case KeyEvent.VK_UP:
+			upArrow = false;
+			break;
+
+		case KeyEvent.VK_DOWN:
+			downArrow = false;
+			break;
+
+		case KeyEvent.VK_ENTER:
+			enterKey = false;
+			if(!allowEnter)
+				allowEnter = true;
+			break;
+		case KeyEvent.VK_CONTROL:
+			strafe = false;
+			break;
+		}
 	}
 	
 	//Same invincibility frame system

@@ -30,7 +30,7 @@ public class Sprite {
 	
 	protected Image image;
 	
-	protected static final String folder = "src/Textures/";
+	public static final String folder = "src/Textures/";
 	
 	//Default Constructor (Stores x and y as double)
 	public Sprite(int x, int y) {
@@ -46,6 +46,7 @@ public class Sprite {
 		this.type = type;
 		visible = true;
 	}
+
 	//Tile Constructor (Stores x and y as integer)
 	public Sprite(int tx, int ty, int type) {
 		this.tx = tx; this.ty = ty;
@@ -53,19 +54,16 @@ public class Sprite {
 		visible = true;
 	}
 	
-	protected void createImageIcon(ImageIcon ii, String name)
-	{
-		ii = new ImageIcon(folder+name);
-	}
-	
 	protected void useImage(ImageIcon ii)
 	{	
 		image = ii.getImage();
+		width = image.getWidth(null);
+		height = image.getHeight(null);
 	}
 	
 	protected void loadImage(String imageName) {
 		ImageIcon imageIcon = new ImageIcon(folder+imageName);
-		image = imageIcon.getImage();	
+		useImage(imageIcon);
 	}
 		
 	protected void getImageDimensions() {
@@ -97,8 +95,7 @@ public class Sprite {
 	}
 	
 	public boolean isSolid() {
-		if(solid == 0) return false;
-		else return true;
+        return solid != 0;
 	}
 	
 	public Rectangle getBounds(){
