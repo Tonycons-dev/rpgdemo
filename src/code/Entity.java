@@ -1,6 +1,6 @@
 package code;
 
-public abstract class Entity extends Sprite{
+public abstract class Entity extends Sprite {
 		
 	protected int aggro;
 	protected int dNum;
@@ -60,7 +60,7 @@ public abstract class Entity extends Sprite{
 			setHP(amount);
 			invframe = item.getInvTime();
 			//Spawns particles on death
-			ParticleGenerator.add((int)(x + offsetX), (int)(y + offsetY), 3, 2);
+			ParticleGenerator.add(ParticleSpark.class, (int)(x + offsetX), (int)(y + offsetY), 3);
 		}
 		else {
 			invframe--;
@@ -73,7 +73,7 @@ public abstract class Entity extends Sprite{
 		}
 		if(hp < 1) {
 			dead = true;
-			ParticleGenerator.add((int)(x + offsetX), (int)(y + offsetY), 10, 1);
+			ParticleGenerator.add(ParticleIce.class, (int)(x + offsetX), (int)(y + offsetY), 10);
 		}
 	}
 	

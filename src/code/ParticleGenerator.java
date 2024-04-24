@@ -1,5 +1,6 @@
 package code;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.awt.Graphics2D;
 import java.util.LinkedList;
@@ -10,12 +11,21 @@ public class ParticleGenerator {
 
 	// REVISED: LinkedList is better because it allows fast removal of elements.
 	private static final List<Particle> particles = new LinkedList<>();
-	
-	public static void add(int x, int y, int amount, int type) {
-		
+
+	/**
+	 * Creates a particle with a random lifetime.
+	 * @param c Particle class
+	 * @param x X coordinate to spawn particle
+	 * @param y Y coordinate to spawn particle
+	 * @param amount Number of particles
+	 */
+	public static <T extends Particle> void add(Class<T> c, int x, int y, int amount) {
 		for(int i = 0; i < amount; i++) {
-			particles.add(Particle.NewParticle
-				(x+(int)(20 * (Math.random())), y+(int)(20 * (Math.random())), 15, type));
+			try {
+				particles.add(c.getDeclaredConstructor(int.class, int.class, int.class)
+						.newInstance(x+(int)(20 * (Math.random())), y+(int)(20 * (Math.random())), (int)(24 * Math.random())));
+			} catch (NoSuchMethodException | InstantiationException |
+					 IllegalAccessException | InvocationTargetException ignored) {}
 		}
 	}
 	
@@ -25,7 +35,7 @@ public class ParticleGenerator {
 		while(it.hasNext()) {
 			Particle p = it.next();
 
-			if (p.dead()) {
+			if (p.isDead()) {
 				it.remove();
 			}
 			else {

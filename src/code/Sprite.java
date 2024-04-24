@@ -9,15 +9,15 @@ public class Sprite {
 	protected double direction;
 	protected double rotationSpeed;
 	protected double moveSpeed;
-	protected int entityType;
 	protected int width;
 	protected int height;
 	protected int solid;
-	protected int aggro;
 	protected int type;
+
 	//precise coordinates
 	protected double x;
 	protected double y;
+
 	//coordinates for tiles
 	protected int tx;
 	protected int ty;
@@ -34,70 +34,103 @@ public class Sprite {
 	
 	//Default Constructor (Stores x and y as double)
 	public Sprite(int x, int y) {
-		this.x = x; this.y = y;
+		this.x = x;
+		this.y = y;
 		visible = true;
 	}
-	
-	//Entity Constructor (Stores x and y as double)
-	public Sprite(int x, int y, int type, int aggro, double direction) {
-		this.x = x; this.y = y;
-		this.aggro = aggro;
-		this.direction = direction;
+
+	public Sprite(int tx, int ty, int type) {
+		this.tx = tx;
+		this.ty = ty;
 		this.type = type;
 		visible = true;
 	}
 
-	//Tile Constructor (Stores x and y as integer)
-	public Sprite(int tx, int ty, int type) {
-		this.tx = tx; this.ty = ty;
-		this.type = type;
-		visible = true;
-	}
-	
-	protected void useImage(ImageIcon ii)
-	{	
+	/**
+	 * Changes the Image to another existing Image.
+	 */
+	protected void useImage(ImageIcon ii) {
 		image = ii.getImage();
 		width = image.getWidth(null);
 		height = image.getHeight(null);
 	}
-	
+
+	/**
+	 * Change the Image.
+	 * @param imageName Path relative to Textures directory.
+	 */
 	protected void loadImage(String imageName) {
 		ImageIcon imageIcon = new ImageIcon(folder+imageName);
 		useImage(imageIcon);
 	}
-		
-	protected void getImageDimensions() {
-		width = image.getWidth(null);
-		height = image.getHeight(null);
-	}
-	
+
+	/**
+	 * Returns the Image assigned to this sprite.
+	 */
 	public Image getImage() {
 		return image;
 	}
-	
+
+	/**
+	 * Returns the direction (angle of rotation).
+	 */
 	public double getDirection() {
-		return direction;}
+		return direction;
+	}
+
+	/**
+	 * Returns the width.
+	 */
 	public int getWidth() {
-		return width;}
+		return width;
+	}
+
+	/**
+	 * Returns the height.
+	 */
 	public int getHeight() {
-		return height;}
+		return height;
+	}
+
+	/**
+	 * Returns the X coordinate.
+	 */
 	public double getX() {
-		return x;}
+		return x;
+	}
+
+	/**
+	 * Returns the Y coordinate.
+	 */
 	public double getY() {
-		return y;}
+		return y;
+	}
+
 	public int getTX() {
-		return tx;}
+		return tx;
+	}
+
 	public int getTY() {
-		return ty;}
-	
+		return ty;
+	}
+
+	/**
+	 * Returns if the sprite is visible.
+	 */
 	public boolean isVisible() {
 		return visible;
 	}
-	
+
+	/**
+	 * Returns true if the sprite has collision.
+	 */
 	public boolean isSolid() {
         return solid != 0;
 	}
-	
+
+	/**
+	 * Returns the bounding area.
+	 */
 	public Rectangle getBounds(){
 		return new Rectangle((int)x, (int)y, width, height);
 	}
@@ -106,7 +139,10 @@ public class Sprite {
 	public Rectangle getTBounds(double sx, double sy) {
 		return new Rectangle((int)sx + tx, (int)sy + ty, width, height); 
 	}
-	
+
+	/**
+	 * Sets the sprite visible.
+	 */
 	public void setVisible(Boolean visible) {
 		this.visible = visible;
 	}

@@ -1,25 +1,18 @@
 package code;
 
 
-public class Tile extends Sprite
-{
-	private static class Properties
-	{
-		public String fileName;
-		public int isSolid;
-		
-		public Properties(String fileName, int isSolid)
-		{
-			this.fileName = fileName;
-			this.isSolid  = isSolid;
+public class Tile extends Sprite {
+
+	private static final Properties[] types;
+
+	private record Properties(String fileName, int isSolid) {
+
+		public int isSolidType() {
+			return isSolid;
 		}
-		public String getFileName() { return fileName; }
-		public int    isSolidType() { return isSolid;  }
 	}
-	
-	static Properties[] types;
-	static
-	{
+
+	static {
 		types = new Properties[0xFF];
 		types[0x01] = new Properties("Woodfloor1.png"  , 0);
 		types[0x02] = new Properties("Stonebrick1.png" , 1);
@@ -61,22 +54,19 @@ public class Tile extends Sprite
 		types[0x26] = new Properties("KingsThrone.png" , 1);
 	}
 	
-	public Tile(int x, int y, int type) 
-	{
+	public Tile(int x, int y, int type) {
 		super(x, y, type);
 		
-		if (type > 0 && type < 99)
-		{
-			loadImage(types[type].getFileName());
+		if (type > 0 && type < 99) {
+			loadImage(types[type].fileName());
 			solid = types[type].isSolidType();			
 		}
-		else if (type == 99)
-		{
+		else if (type == 99) {
+			// type 99 represents empty tile
 			loadImage(null);
 			solid = 1;
 		}
-		else
-		{
+		else {
 			loadImage("UntexturedTile.png");
 			solid = 0;
 		}
@@ -85,7 +75,6 @@ public class Tile extends Sprite
 //	      case 99:loadImage(null);				solid = 1; break;
 //	      default: loadImage("UntexturedTile.png"); break;
 //		}
-		getImageDimensions();
 	}
 
 	public int getType() 

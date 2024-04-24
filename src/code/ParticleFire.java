@@ -21,7 +21,6 @@ public class ParticleFire extends Particle {
 	public ParticleFire(int x, int y, int lifespan) {
 		super(x, y, lifespan);
 		useImage(fireParticle);
-		this.lifespan = lifespan;
 	}
 	
 	@Override

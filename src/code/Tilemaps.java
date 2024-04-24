@@ -1,5 +1,42 @@
 package code;
 
+
+/*
+                               ||
+                               ||
+                               ||
+							   ||
+							 ======
+							 \    /
+						      \  /
+							   \/
+
+	!!!!!!!!!!!!!!!!!!!! ATTENTION GRADER !!!!!!!!!!!!!!!!!!!!
+
+	!!!!!!!!!!!!!!!!!!!!!!! LOOK HERE !!!!!!!!!!!!!!!!!!!!!!!!
+
+			THIS CLASS WILL BE REMOVED IN THE FUTURE
+			          AND REPLACED BY ROOM
+
+				   AS SUCH IT HAS NO JAVADOC
+
+			         PLEASE DO NOT GRADE IT
+
+	!!!!!!!!!!!!!!!!!!!!!!! LOOK HERE !!!!!!!!!!!!!!!!!!!!!!!	!
+
+	!!!!!!!!!!!!!!!!!!!! ATTENTION GRADER !!!!!!!!!!!!!!!!!!!!
+
+								/\
+							   /  \
+							  /    \
+							  ======
+								||
+								||
+								||
+								||
+ */
+
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
@@ -77,22 +114,22 @@ public class Tilemaps {
 	}
 	
   
-  public static int[] getConnectedRooms(int zone) {
-  switch(zone)
-  {
-  case 94:  return new int[] {94, 110, 126};
-  case 95:  return new int[] {95};
-  case 110: return new int[] {94, 110, 126};
-  case 111: return new int[] {111, 127};
-  case 112: return new int[] {112}; 
-  case 113: return new int[] {113}; 
-  case 126: return new int[] {126, 110, 94};
-  case 127: return new int[] {127, 111};
-  case 128: return new int[] {128};
-  case 142: return new int[] {142, 143, 158, 159};
-  case 143: return new int[] {142, 143, 158, 159};
-  default: return null;
-  }
-  }
+	public static int[] getConnectedRooms(int zone) {
+		switch(zone)
+		{
+			case 94:  return new int[] {94, 110, 126};
+			case 95:  return new int[] {95};
+			case 110: return new int[] {94, 110, 126};
+			case 111: return new int[] {111, 127};
+			case 112: return new int[] {112};
+			case 113: return new int[] {113};
+			case 126: return new int[] {126, 110, 94};
+			case 127: return new int[] {127, 111};
+			case 128: return new int[] {128};
+			case 142: return new int[] {142, 143, 158, 159};
+			case 143: return new int[] {142, 143, 158, 159};
+			default: return null;
+		}
+	}
 	
 }

@@ -294,8 +294,8 @@ public void paintComponent(Graphics g)
 		buffer.setTransform(oldTransform);
 		
 		buffer.rotate(Math.toRadians(entity.getDirection()),
-		player.getScrollX() + entity.getX() + entity.getWidth() / 2, 
-		player.getScrollY() + entity.getY() + entity.getHeight() / 2);
+		player.getScrollX() + entity.getX() + entity.getWidth() / 2.0,
+		player.getScrollY() + entity.getY() + entity.getHeight() / 2.0);
 			
 		buffer.drawImage(entity.getImage(), 
 				(int)(player.getScrollX() + entity.getX()), 
@@ -311,7 +311,7 @@ public void paintComponent(Graphics g)
 			
 			if(entity.getAggro() == 1) {
 				//If hostile, deal damage
-				player.damage(entity);
+				player.takeContactDamageFrom(entity);
 			}
 			else {
 				if(player.isInteracting()) {
@@ -353,11 +353,11 @@ public void paintComponent(Graphics g)
 		buffer.setColor(Color.BLACK);
 		
 		//Draw debug statistics
-		buffer.drawString("Zone: "+Integer.toString(zone), 500, 416);
-		buffer.drawString("Item Slot: "+Byte.toString(player.usedItemSlot()), 500, 432);
-		buffer.drawString("Tiles: "+Integer.toString(tiles.size()), 560, 416);
-		buffer.drawString("Vertical Line Crossed: "+Boolean.toString(vLineCrossed), 300, 416);
-		buffer.drawString("Horizontal Line Crossed: "+Boolean.toString(hLineCrossed), 300, 432);
+		buffer.drawString("Zone: "+ zone, 500, 416);
+		buffer.drawString("Item Slot: "+ player.usedItemSlot(), 500, 432);
+		buffer.drawString("Tiles: "+ tiles.size(), 560, 416);
+		buffer.drawString("Vertical Line Crossed: "+ vLineCrossed, 300, 416);
+		buffer.drawString("Horizontal Line Crossed: "+ hLineCrossed, 300, 432);
 		buffer.drawString("Loaded Rooms: ", 300, 448);
 		
 		Menu.showHealthBar(player, buffer);
@@ -420,11 +420,8 @@ public void checkCollisions()
 		//This could be changed later to 
 		//"if (tile.emitsParticles = true), generator.addParticle(tile.getparticle)
 			
-		if(tile.getType() == 11) 
-		{
-			ParticleGenerator.add(
-				(int)(tile.getTX() + player.getScrollX()), 
-				(int)(tile.getTY() + player.getScrollY()), 1, 0);
+		if(tile.getType() == 11) {
+			ParticleGenerator.add(ParticleFire.class, (int)(tile.getTX() + player.getScrollX()), (int)(tile.getTY() + player.getScrollY()), 1);
 		}
 			
 		if(playerHitbox.intersects(tileHitbox) && tile.isSolid()) 
@@ -447,7 +444,7 @@ public void checkCollisions()
 				initialX = (int) player.getX();
 				initialY = 300;
 				
-				player.setCoords(player.getX(), 300);
+				player.setPosition(player.getX(), 300);
 				isTransitioning = true;
 			}
 			else if(tile.getType()==16) 
@@ -468,7 +465,7 @@ public void checkCollisions()
 				initialX = (int) player.getX();
 				initialY = 50;
 				
-				player.setCoords(player.getX(), 50);
+				player.setPosition(player.getX(), 50);
 				isTransitioning = true;
 			}
 			else if(tile.getType()==17) 
@@ -489,7 +486,7 @@ public void checkCollisions()
 				initialX = 100;
 				initialY = (int) player.getY();
 				
-				player.setCoords(100, player.getY());
+				player.setPosition(100, player.getY());
 				isTransitioning = true;
 			}
 			else if(tile.getType()==18) 
@@ -510,7 +507,7 @@ public void checkCollisions()
 				initialX = 450;
 				initialY = (int) player.getY();
 				
-				player.setCoords(450, player.getY());
+				player.setPosition(450, player.getY());
 				isTransitioning = true;
 			}
 		else

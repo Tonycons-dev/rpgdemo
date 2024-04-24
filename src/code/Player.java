@@ -69,7 +69,6 @@ public class Player extends Sprite {
 		enterKey       = false;
 
 		useImage(playerIdle);
-		getImageDimensions();
 	}
 	
 	public void move() {
@@ -291,7 +290,7 @@ public class Player extends Sprite {
 	
 	//Same invincibility frame system
 	
-	public void damage(Entity entity) {
+	public void takeContactDamageFrom(Entity entity) {
 		hit = true;
 		if(invframe == 0) {
 			hp -= entity.getDamage();
@@ -300,7 +299,6 @@ public class Player extends Sprite {
 		else {
 			invframe--;
 		}
-		
 	}
 	
 	//Regen while not being touched by an attack at all
@@ -344,8 +342,9 @@ public class Player extends Sprite {
 	public void setHit(boolean b) {
 		hit = b;
 	}
-	public void setCoords(double xc, double yc) {
-		x = xc; y = yc;
+	public void setPosition(double x, double y) {
+		this.x = x;
+		this.y = y;
 	}
 	
 	//Determine how the screen will scroll
