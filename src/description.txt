@@ -1,0 +1,27 @@
+This is an old Java game I wrote in 2019.
+
+We're looking to improve the code quality and add features that were never finished.
+The end result should implement all the mechanics necessary for a Zelda-type game.
+
+
+Player Controls -
+        Add blocking and other moves
+        W/S = forward backwards
+        A/D = rotates character
+        Escape accesses inventory
+        Add inventory management
+
+NPCs -
+        Different types of NPC
+        Idle unless provoked
+        Have a random dialogue
+        Shows health bar
+        Can drop points/weapons if killed
+        Add buy/sell from NPCs
+
+
+Multiple levels -
+        Node-based system of connecting rooms (as opposed to the previous grid-based system)
+        Scrolling screen on larger rooms
+        Game over screen when player dies
+        Fade in/fade out on level transition
