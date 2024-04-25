@@ -31,14 +31,20 @@ public class Sprite {
 	protected Image image;
 	
 	public static final String folder = "src/Textures/";
-	
-	//Default Constructor (Stores x and y as double)
+
+
+	/**
+	 * Constructs a Sprite from XY coordinates.
+	 */
 	public Sprite(int x, int y) {
 		this.x = x;
 		this.y = y;
 		visible = true;
 	}
 
+	/**
+	 * TODO: Remove
+	 */
 	public Sprite(int tx, int ty, int type) {
 		this.tx = tx;
 		this.ty = ty;
@@ -106,10 +112,16 @@ public class Sprite {
 		return y;
 	}
 
+	/**
+	 * TODO: Remove
+	 */
 	public int getTX() {
 		return tx;
 	}
 
+	/**
+	 * TODO: Remove
+	 */
 	public int getTY() {
 		return ty;
 	}

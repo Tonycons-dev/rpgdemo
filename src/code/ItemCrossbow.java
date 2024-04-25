@@ -12,12 +12,19 @@ public class ItemCrossbow extends Item {
 		imgCrossbow = new ImageIcon(Sprite.folder + "Crossbow.png");
 	}
 
+	/**
+	 * @see Item constructor
+	 */
 	public ItemCrossbow(int x, int y) {
 		super(x, y);
 		meleeDamage = 1;
 		useImage(imgCrossbow);
 	}
 
+	/**
+	 * @see Item useItem
+	 * TODO: Implement
+	 */
 	@Override
 	public void useItem(double xp, double yp, int w, int h, double dr) {
 		useImage(imgCrossbowShooting);

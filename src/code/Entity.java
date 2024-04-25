@@ -17,7 +17,16 @@ public abstract class Entity extends Sprite {
 	private static Dialogue[] dialogs = {
 		new Dialogue("src/Dialogues/Dialog1.txt")
 	};
-	
+
+	/**
+	 * Entity constructor
+	 * @param x X coordinate
+	 * @param y y coordinate
+	 * @param aggro Hostility state
+	 * @param direction Angle of rotation
+	 * @param dNum Dialogue ID it references
+	 * @param hp Health points
+	 */
 	public Entity(int x, int y, int aggro, double direction, int dNum, int hp) 
 	{
 		super(x, y);
@@ -30,8 +39,11 @@ public abstract class Entity extends Sprite {
 		this.hp = hp;
 		inv = 100;
 	}
-	
-	
+
+	/**
+	 * Instantiate a derived class Entity with parameters
+	 * TODO: Refactor
+	 */
 	public static Entity NewEntity(int x, int y, int type, int aggro, double direction, int dNum, int hp) 
 	{
 		switch(type) {
@@ -41,14 +53,31 @@ public abstract class Entity extends Sprite {
 			return new EntityGuard(x, y, aggro, direction, dNum, hp);
 		}
 	}
-	
-	//Each entity can provide their own implementation of this method
+
+
+	/**
+	 * Perform movement towards a target
+	 * @param targetX target X coordinate
+	 * @param targetY target Y coordinate
+	 * @param targetDirection angle towards target position
+	 */
 	public abstract void performAI(double targetX, double targetY, double targetDirection);
-	
+
+	/**
+	 * Sets the health points
+	 */
 	public void setHP(int amount) {
 		hp = amount;
 	}
-	
+
+	/**
+	 * Deals damage to the Entity
+	 * TODO: Refactor
+	 * @param amount health points after damage
+	 * @param item Item dealing the damage
+	 * @param offsetX ?
+	 * @param offsetY ?
+	 */
 	public void damage(int amount, Item item, double offsetX, double offsetY) 
 	{
 		aggro = 1;
@@ -76,37 +105,62 @@ public abstract class Entity extends Sprite {
 			ParticleGenerator.add(ParticleIce.class, (int)(x + offsetX), (int)(y + offsetY), 10);
 		}
 	}
-	
+
+	/**
+	 * Responds to a tile collision.
+	 */
 	public void collideWithTile() {
 		colliding = true;
 		x += oldX;
 		y += oldY;
 	}
-	
+
+	/**
+	 * Set collision state
+	 */
 	public void setColliding(boolean b) {
 		colliding = b;
 	}
-	
+
+	/**
+	 * @return the hostility level
+	 */
 	public int getAggro() {
 		return aggro;
 	}
-	
+
+	/**
+	 * @return the current number of health points
+	 */
 	public int getHP() {
 		return hp;
 	}
-	
+
+	/**
+	 * @return Dialogue ID
+	 */
 	public int getDialogNumber() {
 		return dNum;
 	}
-	
+
+	/**
+	 * @return Contact damage this entity deals
+	 */
 	public int getDamage() {
 		return dmg;
 	}
-	
+
+	/**
+	 * @return True if the entity is dead (health is 0)
+	 */
 	public boolean isDead() {
 		return dead;
 	}
-	
+
+	/**
+	 * @param index index
+	 * @return A segment of dialogue this entity uses
+	 */
 	public static Dialogue getDialogue(int index) {
 		return dialogs[index];
 	}

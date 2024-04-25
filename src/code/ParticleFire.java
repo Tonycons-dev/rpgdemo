@@ -18,11 +18,17 @@ public class ParticleFire extends Particle {
 		fireParticle5 = new ImageIcon(folder + "fireparticle5.png");
 	}
 
+	/**
+	 * @see Particle constructor
+	 */
 	public ParticleFire(int x, int y, int lifespan) {
 		super(x, y, lifespan);
 		useImage(fireParticle);
 	}
-	
+
+	/**
+	 * @see Particle update
+	 */
 	@Override
 	public void update() {
 		

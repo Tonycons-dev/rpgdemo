@@ -18,12 +18,18 @@ public class ParticleSpark extends Particle{
 		sparkParticle5 = new ImageIcon(folder + "sparkparticle5.png");
 	}
 
+	/**
+	 * @see Particle constructor
+	 */
 	public ParticleSpark(int x, int y, int lifespan) {
 		super(x, y, lifespan);
 		useImage(sparkParticle);
 		this.lifespan = lifespan;
 	}
-	
+
+	/**
+	 * @see Particle update
+	 */
 	@Override
 	public void update() {
 

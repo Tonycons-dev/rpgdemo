@@ -53,7 +53,13 @@ public class Tile extends Sprite {
 		types[0x25] = new Properties("StoneRoad.png"   , 0);
 		types[0x26] = new Properties("KingsThrone.png" , 1);
 	}
-	
+
+	/**
+	 * Tile constructor
+	 * @param x X position
+	 * @param y Y position
+	 * @param type Tile ID
+	 */
 	public Tile(int x, int y, int type) {
 		super(x, y, type);
 		
@@ -70,15 +76,12 @@ public class Tile extends Sprite {
 			loadImage("UntexturedTile.png");
 			solid = 0;
 		}
-//		switch(type)
-//		{
-//	      case 99:loadImage(null);				solid = 1; break;
-//	      default: loadImage("UntexturedTile.png"); break;
-//		}
 	}
 
-	public int getType() 
-	{
+	/**
+	 * Returns the tile ID.
+	 */
+	public int getType() {
 		return type;
 	}
 }

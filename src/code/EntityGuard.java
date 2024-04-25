@@ -13,21 +13,18 @@ public class EntityGuard extends Entity{
 		guardMoving = new ImageIcon(Sprite.folder + "GuardMoving.gif");
 	}
 
+	/**
+	 * @see Entity constructor
+	 */
 	public EntityGuard(int x, int y, int aggro, double direction, int dNum, int hp) {
 		super(x, y, aggro, direction, dNum, hp);
 		useImage(guardIdle);
 		moveSpeed = 1;
 	}
-	
-	public EntityGuard(int x, int y) {
-		super(x, y, 0, 0, 0, 30);
-		aggro = 1;
-		direction = 0.0;
-		inv = 100;
-		moveSpeed = 1;
-		useImage(guardIdle);
-	}
-	
+
+	/**
+	 * @see Entity performAI
+	 */
 	public void performAI(double targetX, double targetY, double targetDirection) {
 		//A basic behavior where the entity moves towards the player.
 		

@@ -1,41 +1,6 @@
 package code;
 
-
-/*
-                               ||
-                               ||
-                               ||
-							   ||
-							 ======
-							 \    /
-						      \  /
-							   \/
-
-	!!!!!!!!!!!!!!!!!!!! ATTENTION GRADER !!!!!!!!!!!!!!!!!!!!
-
-	!!!!!!!!!!!!!!!!!!!!!!! LOOK HERE !!!!!!!!!!!!!!!!!!!!!!!!
-
-			THIS CLASS WILL BE REMOVED IN THE FUTURE
-			          AND REPLACED BY ROOM
-
-				   AS SUCH IT HAS NO JAVADOC
-
-			         PLEASE DO NOT GRADE IT
-
-	!!!!!!!!!!!!!!!!!!!!!!! LOOK HERE !!!!!!!!!!!!!!!!!!!!!!!	!
-
-	!!!!!!!!!!!!!!!!!!!! ATTENTION GRADER !!!!!!!!!!!!!!!!!!!!
-
-								/\
-							   /  \
-							  /    \
-							  ======
-								||
-								||
-								||
-								||
- */
-
+// TODO: Replace with ROOM
 
 import java.io.File;
 import java.io.FileNotFoundException;

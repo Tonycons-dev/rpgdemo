@@ -39,6 +39,10 @@ public class Inventory {
         cursorImage = itemCursor;
     }
 
+    /**
+     * Performs the Item's behavior for an item in given slot
+     * @see Item useItem
+     */
     public static void useItem(double xp, double yp, int w, int h, double dr, byte slot) {
         if (slot == 1 && items[slot] != null) {
             items[slot].useItem(xp, yp, w, h, dr);
@@ -48,6 +52,9 @@ public class Inventory {
         }
     }
 
+    /**
+     * Update cursor
+     */
     public static void updateCursor() {
         if(up && cursorY > 128) {
             cursorY -= 64;
@@ -122,6 +129,9 @@ public class Inventory {
         buffer.drawImage(cursorImage, cursorX, cursorY, null);
     }
 
+    /**
+     * Responds to a keyboard key press
+     */
     public static void keyPressed(KeyEvent e) {
         //Buttons must be pressed repeatedly to move cursor
         int key = e.getKeyCode();
@@ -142,6 +152,10 @@ public class Inventory {
         }
     }
 
+    /**
+     * Change the item in a given slot
+     * TODO: Refactor
+     */
     public static void newItem(int type, int slot) {
 
         switch (type) {

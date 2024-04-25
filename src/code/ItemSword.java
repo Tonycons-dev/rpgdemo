@@ -6,6 +6,9 @@ public class ItemSword extends Item
 {
 	private int wOffset = -90;
 
+	/**
+	 * @see Item constructor
+	 */
 	public ItemSword(int x, int y) {
 		super(x, y);
 		loadImage("ItemBasicSword.png");
@@ -14,6 +17,9 @@ public class ItemSword extends Item
 		invTime = 20;
 	}
 
+	/**
+	 * @see Item useItem
+	 */
 	@Override
 	public void useItem(double xp, double yp, int w, int h, double dr) {
 		direction = dr + wOffset;

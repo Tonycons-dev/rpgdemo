@@ -28,7 +28,10 @@ public class ParticleGenerator {
 					 IllegalAccessException | InvocationTargetException ignored) {}
 		}
 	}
-	
+
+	/**
+	 * Renders the active particles.
+	 */
 	public static void update(Graphics2D buffer) {
 		Iterator<Particle> it = particles.iterator();
 

@@ -43,6 +43,11 @@ public class Player extends Sprite {
 		playerMovingAttack = new ImageIcon(folder+"Player_Attack_Moving.gif");
 	}
 
+	/**
+	 * Player constructor
+	 * @param x X coordinate
+	 * @param y Y coordinate
+	 */
 	public Player(int x, int y) {
 		super(x, y);
 
@@ -70,7 +75,10 @@ public class Player extends Sprite {
 
 		useImage(playerIdle);
 	}
-	
+
+	/**
+	 * Calculates the position of the player for the next frame.
+	 */
 	public void move() {
 		if(moving) {
 			if(forward && !colliding) {
@@ -168,7 +176,10 @@ public class Player extends Sprite {
 				useImage(playerIdle);
 		}
 	}
-	
+
+	/**
+	 * Updates player state based on keyboard key pressed.
+	 */
 	public void keyPressed(KeyEvent e)
 	{
 		// FIXED: Upgraded to switch statements
@@ -229,7 +240,10 @@ public class Player extends Sprite {
 			break;
 		}
 	}
-	
+
+	/**
+	 * Updates player state based on keyboard key released.
+	 */
 	public void keyReleased(KeyEvent e) {
 
 		switch (e.getKeyCode()) {
@@ -287,9 +301,10 @@ public class Player extends Sprite {
 			break;
 		}
 	}
-	
-	//Same invincibility frame system
-	
+
+	/**
+	 * Receives damage from an entity.
+	 */
 	public void takeContactDamageFrom(Entity entity) {
 		hit = true;
 		if(invframe == 0) {
@@ -300,10 +315,11 @@ public class Player extends Sprite {
 			invframe--;
 		}
 	}
-	
-	//Regen while not being touched by an attack at all
-	//Using invincibility frames prevents constant regen
-	
+
+	/**
+	 * 	Regen while not being touched by an attack at all
+	 * 	Using invincibility frames prevents constant regen
+	 */
 	public void regen() {
 		if(!hit) {
 			
@@ -317,10 +333,11 @@ public class Player extends Sprite {
 			}
 		}
 	}
-	
-	//Simple collision physics but effective for directional movement,
-	//where the player moves in the opposite direction when hitting a tile
-	
+
+	/**
+	 * 	Simple collision physics but effective for directional movement,
+	 * 	where the player moves in the opposite direction when hitting a tile
+	 */
 	public void collideWithTile() {
 		colliding = true;
 		if(hScrollEnabled && vLineCrossed) {
@@ -342,6 +359,12 @@ public class Player extends Sprite {
 	public void setHit(boolean b) {
 		hit = b;
 	}
+
+	/**
+	 * Set player's coordinates
+	 * @param x X coordinate
+	 * @param y Y coordinate
+	 */
 	public void setPosition(double x, double y) {
 		this.x = x;
 		this.y = y;
