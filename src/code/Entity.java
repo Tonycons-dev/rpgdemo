@@ -12,6 +12,7 @@ public abstract class Entity extends Sprite {
 	
 	protected int invframe = 0;
 	protected boolean dead;
+
 	
 	//Dialogues that entities reference
 	private static Dialogue[] dialogs = {
@@ -164,4 +165,6 @@ public abstract class Entity extends Sprite {
 	public static Dialogue getDialogue(int index) {
 		return dialogs[index];
 	}
+
+	public abstract int getCoinValue();
 }
