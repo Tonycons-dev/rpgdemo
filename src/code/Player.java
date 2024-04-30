@@ -34,6 +34,7 @@ public class Player extends Sprite {
 	private boolean vScrollEnabled;
 	private boolean hLineCrossed;
 	private boolean vLineCrossed;
+	private int coins;
 
 
 	static {
@@ -72,7 +73,7 @@ public class Player extends Sprite {
 		upArrow        = false;
 		downArrow      = false;
 		enterKey       = false;
-
+		coins = 0;
 		useImage(playerIdle);
 	}
 
@@ -475,5 +476,16 @@ public class Player extends Sprite {
 	public boolean isEnterAllowed() {
 		return allowEnter;
 	}
-	
+	public int getCoins()
+	{
+		return coins;
+	}
+	public void addCoins(int a)
+	{
+		coins += a;
+	}
+	public void subtractCoins(int a)
+	{
+		coins -= a;
+	}
 }
