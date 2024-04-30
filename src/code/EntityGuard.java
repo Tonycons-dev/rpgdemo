@@ -51,4 +51,10 @@ public class EntityGuard extends Entity{
 		oldX = xp * moveSpeed * -1.0;
 		oldY = yp * moveSpeed * -1.0;
     }
+
+	@Override
+	public int getCoinValue()
+	{
+		return 100;
+	}
 }
