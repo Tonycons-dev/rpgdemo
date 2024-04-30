@@ -1,16 +1,25 @@
-SECTION0
-Select one of the two choices.
--CHOICE1
-This is choice 1.
--GOTO1
--CHOICE2
-This is choice 2.
--GOTO1
-SECTION1
-This is the second section.
--CHOICE1
-This is choice 1.
--GOTO0
--CHOICE2
-This is choice 2.
--GOTO0
+Frame1:
+
+    text:
+
+    options = {
+
+        [1] =
+
+            Frame2
+
+        [2] = ...
+            Frame3
+    }
+
+
+Frame2:
+
+    options = {
+
+
+    }
+
+Frame3:
+    text: goodbye
+    options:

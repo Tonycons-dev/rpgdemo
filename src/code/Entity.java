@@ -16,7 +16,7 @@ public abstract class Entity extends Sprite {
 	
 	//Dialogues that entities reference
 	private static Dialogue[] dialogs = {
-		new Dialogue("src/Dialogues/Dialog1.txt")
+		new Dialogue("src/Dialogues/Dialog1.json")
 	};
 
 	/**

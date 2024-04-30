@@ -331,6 +331,9 @@ public void paintComponent(Graphics g)
 				
 				entity.damage(entity.getHP() - item.getMeleeDamage(), item,
 						player.getScrollX(), player.getScrollY());
+
+				if (entity.isDead())
+					player.addCoins(entity.getCoinValue());
 			}
 		}
 	}	

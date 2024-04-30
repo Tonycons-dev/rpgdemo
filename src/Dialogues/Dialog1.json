@@ -1,0 +1,36 @@
+{
+    "frames": [
+        {
+            "text": " Welcome to our shop! Buy something.",
+            "options": [
+                {
+                    "text": "Buy shield (200)",
+                    "action": "sellShield",
+                    "goto": 1
+                },
+                {
+                    "text": "Buy 10 arrows (100)",
+                    "action": "sellArrow",
+                    "goto": 1
+                },
+                {
+                    "text": "Goodbye.",
+                    "action": "quit"
+                }
+            ]
+        },
+        {
+            "text": " Buy something else? ",
+            "options": [
+                {
+                    "text": "Yes",
+                    "goto": 1
+                },
+                {
+                    "text": "Goodbye.",
+                    "action": "quit"
+                }
+            ]
+        }
+    ]
+}
