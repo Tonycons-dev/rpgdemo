@@ -317,7 +317,7 @@ public void paintComponent(Graphics g)
 				if(player.isInteracting()) {
 				//If friendly, provide dialogue
 				Dialogue dialogue = Entity.getDialogue(entity.getDialogNumber());
-				dialogue.showDialog(player, buffer, 204, 111, 200, 130);
+				//dialogue.showDialog(player, buffer, 204, 111, 200, 130);
 				}
 			}
 		}

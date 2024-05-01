@@ -150,6 +150,7 @@ public class Inventory {
         if(key == KeyEvent.VK_ENTER && !enter) {
             enter = true;
         }
+
     }
 
     /**
