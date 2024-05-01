@@ -6,12 +6,12 @@
                 {
                     "text": "Buy shield (200)",
                     "action": "sellShield",
-                    "goto": 1
+                    "next": 1
                 },
                 {
                     "text": "Buy 10 arrows (100)",
                     "action": "sellArrow",
-                    "goto": 1
+                    "next": 1
                 },
                 {
                     "text": "Goodbye.",
@@ -24,7 +24,7 @@
             "options": [
                 {
                     "text": "Yes",
-                    "goto": 1
+                    "next": 1
                 },
                 {
                     "text": "Goodbye.",

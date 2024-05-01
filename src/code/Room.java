@@ -1,9 +1,23 @@
 package code;
 
 import java.awt.*;
+import java.util.Arrays;
 import java.util.List;
+import com.google.gson.*;
+
 
 public class Room {
+
+
+    // This must match the file structure exactly.
+    public static class Descriptor {
+
+        private int width;
+        private int height;
+        private int[] layout;
+        private int[] tiles;
+        private int[][] entities;
+    }
 
     /**
      * Constructs a room from a level string.
@@ -11,6 +25,14 @@ public class Room {
      */
     public Room(String str) {
 
+        var gson = new Gson();
+        Descriptor d = gson.fromJson(str, Descriptor.class);
+
+        System.out.println("Descriptor:");
+        System.out.println(d.width);
+        System.out.println(d.height);
+        System.out.println(Arrays.toString(d.tiles));
+        System.out.println(Arrays.deepToString(d.entities));
     }
 
     /**
