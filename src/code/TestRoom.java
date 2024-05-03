@@ -9,7 +9,7 @@ public class TestRoom {
 
 
     public static void main(String[] args) throws IOException {
-        var str = Files.readString(Path.of(System.getProperty("user.dir") + "/src/Maps/94.json"));
+        var str = Files.readString(Path.of(System.getProperty("user.dir") + "/src/Maps/F.json"));
         var room = new Room(str);
     }
 }

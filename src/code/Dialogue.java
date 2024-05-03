@@ -7,9 +7,6 @@ public class Dialogue {
 	
 	// See https://github.com/google/gson/blob/main/UserGuide.md
 
-	public Dialogue(String textFilePath) {
-		Scanner lineScan = new Scanner(
-	
-	}
+	public Dialogue(String textFilePath) {}
 
 }
