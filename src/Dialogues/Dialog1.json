@@ -16,7 +16,7 @@
                 {
                     "text": "Goodbye.",
                     "action": "quit"
-                    "next": -1
+                    "next": 0
                 }
             ]
         },
@@ -30,7 +30,7 @@
                 {
                     "text": "Goodbye.",
                     "action": "quit"
-                    "next": -1
+                    "next": 0
                 }
             ]
         }
