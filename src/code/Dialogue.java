@@ -26,7 +26,6 @@ public class Dialogue {
 		}
 		private Frame[] frames;
 	}
-	public Dialogue(String textFilePath) {
 
 	Descriptor d;
 	int f = 0;
