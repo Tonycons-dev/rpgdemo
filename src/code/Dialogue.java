@@ -17,7 +17,6 @@ public class Dialogue {
 				private String action;
 				private int next;
 
-<<<<<<< HEAD
 				public Option() {}
 			}
 			private  String text;
@@ -27,9 +26,7 @@ public class Dialogue {
 		}
 		private Frame[] frames;
 	}
-=======
-	public Dialogue(String textFilePath) {}
->>>>>>> origin/main
+	public Dialogue(String textFilePath) {
 
 	Descriptor d;
 	int f = 0;
@@ -40,8 +37,6 @@ public class Dialogue {
 		var gson = new Gson();
 		d = gson.fromJson(str, Descriptor.class);
 
-
-		//RECIEVE INPUT, ASK TONY IF WE USE "KEYPRESS" OR SCAN IT IN
 		while(f!=-1)
 		{
 			step();
