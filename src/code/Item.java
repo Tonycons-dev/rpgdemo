@@ -61,4 +61,5 @@ public abstract class Item extends Sprite {
 	public double getKnockbackY() {
 		return knockbackY;
 	}
+	public abstract int getCoinValue();
 }
