@@ -1,600 +1,393 @@
 package code;
 
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Rectangle;
-import java.awt.Graphics2D;
-import java.awt.Toolkit;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.Serial;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
-
 import javax.swing.JPanel;
 import javax.swing.Timer;
+import com.google.gson.*;
 
-public class Main extends JPanel implements ActionListener
-{
+public class Main extends JPanel implements ActionListener {
 	
-private static final long serialVersionUID = 1L;
-	
-private final int PLAYER_X = 32;
-private final int PLAYER_Y = 288;
-private final int DELAY = 15;
-	
-private int zone;
-private int initialX;
-private int initialY;
-private int offsetX; 
-private int offsetY;
-private int scaledWidth, scaledHeight;
-private int borderX, borderY;
-	
-private boolean[] loadedRooms;
-private boolean ingame;
-private boolean isTransitioning;
-private boolean hLineCrossed;
-private boolean vLineCrossed;
-	
-private Timer timer;
-private Player player;
-private BufferedImage bufferImage;
-private Graphics2D buffer;
-private Color background;
-		
-private List<Tile> tiles;
-private List<Entity> entities;
+	@Serial
+	private static final long serialVersionUID = 1L;
+	private final int PLAYER_X = 32;
+	private final int PLAYER_Y = 288;
+    private int initialX;
+	private int initialY;
+	private int offsetX;
+	private int offsetY;
+	private int scaledWidth, scaledHeight;
+	private int borderX, borderY;
+	private boolean ingame;
+	private boolean hLineCrossed;
+	private boolean vLineCrossed;
+	private final Timer timer;
+	private final Player player;
+	private final BufferedImage bufferImage;
+	private final Graphics2D buffer;
+	private final Color background;
+	private Room room;
+
+	// True if a fade transition is going on.
+	private boolean fading;
+
+	// The current level of transparency in the fade transition
+	private float fadeTransparency;
 
 
-public Main(int scaleWidth, int scaleHeight, int screenWidth, int screenHeight) 
-{
-	//Initialize arrays
-	Tilemaps.init();
-	addKeyListener(new Adapter());
-		
-	background = new Color(87, 86, 84);
-	setBackground(Color.BLACK);
-	setFocusable(true);
-		
-	//Initialize graphics
-	bufferImage = new BufferedImage(640, 480, BufferedImage.TYPE_INT_RGB);
-	buffer = bufferImage.createGraphics();
-	buffer.setColor(background);
-	buffer.fillRect(0, 0, 640, 480);
-		
-	ingame = true; zone = 128;
-	loadedRooms = new boolean[256];
-	isTransitioning = false;
-		
-	player = new Player(PLAYER_X, PLAYER_Y);
-	initialX = PLAYER_X; 
-	initialY = PLAYER_Y;
-		
-	Inventory.newItem(1, 0);
-	Inventory.newItem(2, 1);
-		
-	timer = new Timer(DELAY, this);
-	timer.start();
+	private static class StartLocation {
+		private String start;
+		private int[] position;
+	};
 
-	scaledWidth = scaleWidth; 
-	scaledHeight = scaleHeight;
-	
-	borderX = (screenWidth - scaleWidth) / 2;
-	borderY = (screenHeight - scaleHeight) / 2;
-	
-	tiles = new ArrayList<>();
-	player.setScrollX(0);
-	player.setScrollY(0);
-	
-	Tilemaps.clearMap();
-	
-	for(int i : Tilemaps.getConnectedRooms(zone)) 
-	{
-		int x = 0, y = 0;
+	public Main(int scaleWidth, int scaleHeight, int screenWidth, int screenHeight) throws IOException {
+		//Initialize arrays
+		Tilemaps.init();
+		addKeyListener(new Adapter());
 
-		int diff = zone - i; 
-		int sign = diff < 0 ? -1 : 1;
-		
-		offsetY = 352 * -1 * (diff / 16);
-		offsetX = 640 * (sign * (diff % 16));
-		
-		if(offsetX != 0 && offsetY != 0)
-			player.setScrollingMode(3);
-		else if(offsetX != 0)
-			player.setScrollingMode(1);
-		else if(offsetY != 0)
-			player.setScrollingMode(2);
-		else 
-			player.setScrollingMode(0);
-		
-		for(int k : Tilemaps.loadMap(i)) 
-		{
-			if(x == 640) {
-				x = 0; 
-				y += 32;
-			}
-			if(k != 0)
-				tiles.add(new Tile(offsetX + x, offsetY + y, k));
-			else
-				tiles.add(null);
-			
-			x += 32; 
-		}
-		
-		loadedRooms[i] = true;
-	}
+		background = new Color(87, 86, 84);
+		setBackground(Color.BLACK);
+		setFocusable(true);
 
-	entities = new ArrayList<>();
-	for(int i : Entitymaps.getConnectedMap(zone)) 
-	{
-		int diff = zone - i;
-		int sign = diff < 0 ? -1 : 1;
-			
-		offsetY = 352 * -1 * (diff / 16);
-		offsetX = 640 * (sign * (diff % 16));
-			
-		for(int[] k : Entitymaps.getemap(zone)) {
-			entities.add(Entity.NewEntity
-			(offsetX + k[0], offsetY + k[1], 
-			k[2], k[3], (double)k[4], k[5], k[6]));
-		} 
-	}
-}
-	
-@Override
-public void paintComponent(Graphics g) 
-{
-	super.paintComponent(g);
-		
-	if(ingame) {
-		AffineTransform oldTransform = buffer.getTransform();
-		
-	if(isTransitioning) 
-	{
-		//Reset map states
-		tiles.clear();
-		player.setScrollX(0);
-		player.setScrollY(0);
-		
-		//used to restore previous rotations
-		buffer.setTransform(oldTransform);
+		//Initialize graphics
+		bufferImage = new BufferedImage(640, 480, BufferedImage.TYPE_INT_RGB);
+		buffer = bufferImage.createGraphics();
+		buffer.setColor(background);
+		buffer.fillRect(0, 0, 640, 480);
+		ingame = true;
+
+		var start = new Gson().fromJson(
+				Files.readString(Path.of(System.getProperty("user.dir") + "/src/Maps/start.json")), StartLocation.class);
+
+		player = new Player(start.position[0], start.position[1]);
+		initialX = start.position[0];
+		initialY = start.position[1];
+
+		room = new Room(Files.readString(Path.of(System.getProperty("user.dir") + "/src/Maps/" + start.start + ".json")));
+
+		Inventory.newItem(1, 0);
+		Inventory.newItem(2, 1);
+
+        timer = new Timer(15, this);
+		timer.start();
+
+		scaledWidth = scaleWidth;
+		scaledHeight = scaleHeight;
+
+		borderX = (screenWidth - scaleWidth) / 2;
+		borderY = (screenHeight - scaleHeight) / 2;
+
 		Tilemaps.clearMap();
-		
-		for(int i : Tilemaps.getConnectedRooms(zone)) 
-		{
-			int x = 0, y = 0;
-				
-			int diff = zone - i;
-			int sign = diff < 0 ? -1 : 1;
-			
-			offsetY = 352 * -1 * (diff / 16);
-			offsetX = 640 * (sign * (diff % 16));
-			
-			if(offsetX != 0 && offsetY != 0)
-				player.setScrollingMode(3);
-			else if(offsetX != 0)
-				player.setScrollingMode(1);
-			else if(offsetY != 0)
-				player.setScrollingMode(2);
-			else
-				player.setScrollingMode(0);
-
-			for(int k : Tilemaps.loadMap(i)) 
-			{
-				if(x == 640) {
-					x = 0; 
-					y += 32;
-				}
-				if(k != 0)
-					tiles.add(new Tile(offsetX + x, offsetY + y, k));
-				else
-					tiles.add(null);
-				
-				x += 32; 
-			}
-			loadedRooms[i] = true;
-		}
-		entities.clear();
-		
-		for(int i : Entitymaps.getConnectedMap(zone)) 
-		{
-
-			int diff = zone - i;
-			int sign = diff < 0 ? -1 : 1;
-			
-			offsetY = 352 * -1 * (diff / 16);
-			offsetX = 640 * (sign * (diff % 16));
-			
-			System.out.println(zone);
-			
-			for(int[] k : Entitymaps.getemap(zone)) {
-				entities.add(Entity.NewEntity
-				(offsetX + k[0], offsetY + k[1], 
-				k[2], k[3], (double)k[4], k[5], k[6]));
-			} 
-		}
-		isTransitioning = false;
 	}
-	else 
-	{	
-		if(player.isScrollingEnabled()) {
-			for(Tile tile : tiles) {
-				//Draw tiles with offset
-				if(tile != null)
-				buffer.drawImage(tile.getImage(), 
-				(int)(player.getScrollX()) + tile.getTX(), 
-				(int)(player.getScrollY()) + tile.getTY(), this);
-			} 
-		} 
-		else {
-			for(Tile tile : tiles) {
-				//Draw tiles without offset
-			if(tile != null)
-			buffer.drawImage(tile.getImage(), 
-					tile.getTX(), 
-					tile.getTY(), this);
-			}
+
+	private void renderTiles() {
+		AffineTransform oldTransform = buffer.getTransform();
+
+		for(Tile tile : room.getTiles()) {
+			if (tile == null)
+				continue;
+			//Draw tiles with offset
+			buffer.drawImage(tile.getImage(), (int)tile.getX(), (int)tile.getY(), this);
+		}
+		buffer.setTransform(oldTransform);
+	}
+
+	private void renderEntities() {
+		AffineTransform oldTransform = buffer.getTransform();
+
+		for (Entity entity : room.getEntities()) {
+			buffer.setTransform(oldTransform);
+
+			buffer.rotate(Math.toRadians(entity.getDirection()),
+					entity.getX() + entity.getWidth() / 2.0,
+					entity.getY() + entity.getHeight() / 2.0);
+
+			buffer.drawImage(entity.getImage(), (int)entity.getX(), (int)entity.getY(), this);
+			buffer.setTransform(oldTransform);
 		}
 	}
 
-	buffer.setTransform(oldTransform); 
-	
-	if(player.isVisible()) 
-	{
-		//Draw on screen the first item 
-		//in the player's slot when used
+	private void renderPlayer() {
+		if (!player.isVisible())
+			return;
 
-		if(player.usedItemSlot() == 0 && Inventory.getItem(0) != null)
-		{
-			Item t = Inventory.getItem(0);
+		AffineTransform oldTransform = buffer.getTransform();
 
-			buffer.rotate(
-				Math.toRadians(t.getDirection()),
-				t.getX() + t.getWidth() / 2.0,
-				t.getY() + t.getHeight() / 2.0);
+		for (int i = 0; i < 2; i++) {
+			if (player.usedItemSlot() != i || Inventory.getItem(i) == null)
+				continue;
+
+			Item t = Inventory.getItem(i);
+
+			buffer.rotate(Math.toRadians(t.getDirection()),
+				t.getX() + t.getWidth() / 2.0, t.getY() + t.getHeight() / 2.0);
 
 			buffer.drawImage(t.getImage(), (int)t.getX(), (int)t.getY(), this);
+			buffer.setTransform(oldTransform);
 		}
-		
-		buffer.setTransform(oldTransform);
 
-		if(player.usedItemSlot() == 1 && Inventory.getItem(1) != null)
-		{
-			Item t = Inventory.getItem(1);
-			
-			buffer.rotate(
-				Math.toRadians(t.getDirection()),
-				t.getX() + t.getWidth() / 2.0,
-				t.getY() + t.getHeight() / 2.0);
-					
-			buffer.drawImage(t.getImage(), (int)t.getX(), (int)t.getY(), this);
-		}
-		
-		buffer.setTransform(oldTransform);
-		
-		//Rotate and draw player
-		
-		buffer.rotate(Math.toRadians(player.getDirection()), 
+		// Rotate and draw player
+
+		buffer.rotate(Math.toRadians(player.getDirection()),
 				player.getX() + player.getWidth() / 2.0,
 				player.getY() + player.getHeight() / 2.0);
-		
-		buffer.drawImage(player.getImage(), 
+
+		buffer.drawImage(player.getImage(),
 				(int)player.getX(), (int)player.getY(), this);
+
+		buffer.setTransform(oldTransform);
+	}
+
+	private void renderParticles() {
+		ParticleGenerator.update(buffer);
+	}
+
+	private void renderMenu() {
+		//AffineTransform oldTransform = buffer.getTransform();
+
+		if (!Menu.isVisible())
+			return;
+
+		buffer.drawImage(Menu.closedInventory(), Menu.getX(), Menu.getY(), this);
+
+		if(Inventory.getItem(0) != null)
+			buffer.drawImage(Inventory.getItem(0).getImage(), 80, 432, this);
+
+		if(Inventory.getItem(1) != null)
+			buffer.drawImage(Inventory.getItem(1).getImage(), 130, 432, this);
+
+		buffer.setColor(Color.BLACK);
+
+		buffer.drawString("Item Slot: "+ player.usedItemSlot(), 500, 432);
+		buffer.drawString("Tiles: "+ room.getTiles().size(), 560, 416);
+
+		buffer.drawString("WASD: Move: ", 300, 416);
+		buffer.drawString("SPACE: Item 1", 300, 432);
+		buffer.drawString("SHIFT: Item 2", 300, 448);
+		buffer.drawString("E: Inventory: ", 396, 416);
+		buffer.drawString("F: Interact: ", 396, 432);
+		buffer.drawString("M: Map:", 396, 448);
+
+		Menu.showHealthBar(player, buffer);
+
+		if(player.isInventoryOpen())
+			Inventory.updateGUI(buffer);
+
+		//buffer.setTransform(oldTransform);
+	}
+
+
+	@Override
+	public void paintComponent(Graphics g) {
+		//super.paintComponent(g);
+		buffer.setColor(background);
+		buffer.fillRect(0, 0, 640, 480);
+
+		var g2d = (Graphics2D)g;
+
+		if (!ingame) {
+			Toolkit.getDefaultToolkit().sync();
+			return;
+		}
+		if (fading) {
+			player.stopAnimating();
+			// Advance the fade transition
+			g2d.setComposite(AlphaComposite.getInstance(
+					AlphaComposite.SRC_OVER, fadeTransparency));
+
+			fadeTransparency += 0.01f;
+			if (fadeTransparency >= 0.3f) {
+				fadeTransparency = 1.0f;
+				fading = false;
+				g2d.setComposite(AlphaComposite.getInstance(
+						AlphaComposite.SRC_OVER, 1.0f));
+			} else {
+				// Paint recursively until the fade transition is over
+				repaint();
+			}
+		}
+		AffineTransform oldTransform = buffer.getTransform();
+		AffineTransform scrollOffset = new AffineTransform(oldTransform);
+
+		if (room.getSize().width > 18 && player.getX() > 288) {
+			scrollOffset.translate(288 + player.getDeltaX(), 0);
+			buffer.setTransform(scrollOffset);
+		}
+		if (room.getSize().height > 12 && player.getY() > 192) {
+
+			var yy = 192 - player.getY();
+			if (yy < -(room.getSize().height * 16))
+				yy = -(room.getSize().height * 16);
+
+			scrollOffset.translate(0, yy);
+			buffer.setTransform(scrollOffset);
+		}
+		renderTiles();
+		renderPlayer();
+		renderEntities();
+		renderParticles();
+
+		// We don't want the menu to get scrolled
+		buffer.setTransform(oldTransform);
+		renderMenu();
+
+		g2d.drawImage(bufferImage, borderX, borderY, scaledWidth, scaledHeight, null);
+		Toolkit.getDefaultToolkit().sync();
+		System.gc(); // reduces lag??
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		if (fading)
+			return;
+
+		checkIngameState();
+		checkCollisions();
+		updatePlayer();
+		updateEntities();
+		updateItem();
+		repaint();
 	}
 	
-	Rectangle playerHitbox = player.getBounds();
+	private void checkIngameState() {
+		if(!ingame)
+			timer.stop();
+	}
 	
-	for(Entity entity : entities) 
-	{ 
-		buffer.setTransform(oldTransform);
-		
-		buffer.rotate(Math.toRadians(entity.getDirection()),
-		player.getScrollX() + entity.getX() + entity.getWidth() / 2.0,
-		player.getScrollY() + entity.getY() + entity.getHeight() / 2.0);
-			
-		buffer.drawImage(entity.getImage(), 
-				(int)(player.getScrollX() + entity.getX()), 
-		   		(int)(player.getScrollY() + entity.getY()), this);
-		
-		buffer.setTransform(oldTransform);
-		Rectangle entityHitbox = entity.getTBounds
-				((int)(entity.getX() + player.getScrollX()),
-				 (int)(entity.getY()+player.getScrollY()));
-		
-		player.setHit(false);
-		if(playerHitbox.intersects(entityHitbox)) {
-			
-			if(entity.getAggro() == 1) {
-				//If hostile, deal damage
-				player.takeContactDamageFrom(entity);
+	public void checkCollisions()
+	{
+		Rectangle playerBounds = player.getBounds();
+
+		for (Tile tile : room.getTiles()) {
+
+			if (tile == null)
+				continue;
+
+			if (!(tile.getX() > -1 && tile.getX() < 640))
+				continue;
+
+			Rectangle tileBounds = tile.getBounds();
+
+			if (tile.emitsParticle()) {
+				//ParticleGenerator.add(tile.getParticleClass(), (int)tile.getX(), (int)tile.getY(), 1);
+			}
+			if (!(playerBounds.intersects(tileBounds) && tile.isSolid())) {
+				player.endTileCollision();
+				continue;
+			}
+			if (tile.isDoor()) {
+				String nextRoom = room.getNextRoomName(tile.getX(), tile.getY());
+
+				if (nextRoom != null) {
+					enterNewRoom(nextRoom, tile);
+				}
+				else {
+					player.collideWithTile();
+				}
+			}
+			else if (tile.isLockedDoor()) {
+				// TODO
+				player.collideWithTile();
 			}
 			else {
-				if(player.isInteracting()) {
-				//If friendly, provide dialogue
-				Dialogue dialogue = Entity.getDialogue(entity.getDialogNumber());
-				//dialogue.showDialog(player, buffer, 204, 111, 200, 130);
+				player.collideWithTile();
+			}
+		}
+	}
+
+	private void enterNewRoom(String nextRoom, Tile door) {
+		try {
+			room = new Room(Files.readString(
+					Path.of(System.getProperty("user.dir") + "/src/Maps/" + nextRoom + ".json")));
+		} catch (IOException i) {
+			throw new RuntimeException(i);
+		}
+
+		// The player needs to move in order to appear relative to the door he just walked in
+		if (door.isUpwardDoor() || door.isDownwardDoor()) {
+			player.setY(player.getY() > 192 ? 48 : 320);
+		}
+		else if (door.isLeftwardDoor() || door.isRightwardDoor()) {
+			player.setX(player.getX() > 288 ? 48 : 544);
+		}
+
+		// Begins the fade transition
+		ParticleGenerator.clear();
+		fading = true;
+		fadeTransparency = 0.0f;
+	}
+	
+	private void updatePlayer() {
+		if(player.isVisible())
+			player.move();
+
+		if(!player.isEnterAllowed())
+			player.setEnterKey(false);
+
+		player.regen();
+	}
+
+	private void updateEntities() {
+		for(Iterator<Entity> iter = room.getEntities().iterator(); iter.hasNext();) {
+			Entity entity = iter.next();
+
+			if(entity.isDead())
+				iter.remove();
+
+			Tile tile = room.getTileAt(entity.getX(), entity.getY());
+
+			if (tile != null && tile.isSolid())
+				entity.collideWithTile();
+			else
+				entity.setColliding(false);
+
+			entity.performAI(player.getX(), player.getY(), player.getDirection());
+
+			Rectangle entityBounds = entity.getBounds();
+
+//					((int)(entity.getX() + player.getScrollX()),
+//							(int)(entity.getY()+player.getScrollY()));
+
+			Rectangle playerBounds = player.getBounds();
+			player.setHit(false);
+			if(playerBounds.intersects(entityBounds)) {
+				//If hostile, deal damage, else provide dialogue
+				if(entity.getAggro() == 1) {
+					player.takeContactDamageFrom(entity);
+				}
+				else if(player.isInteracting()) {
+					//If friendly, provide dialogue
+					Dialogue dialogue = Entity.getDialogue(entity.getDialogNumber());
+					//dialogue.showDialog(player, buffer, 204, 111, 200, 130);
+				}
+			}
+			if(player.isUsingItem()) {
+				//Check if the item is hitting the entity
+				Item item = Inventory.getItem(player.usedItemSlot());
+				Rectangle itemBounds = item.getBounds();
+
+				if(itemBounds.intersects(entityBounds)) {
+					entity.damage(entity.getHP() - item.getMeleeDamage(), item, 0, 0);
+					if (entity.isDead())
+						player.addCoins(entity.getCoinValue());
 				}
 			}
 		}
-		if(player.isUsingItem()) {
-			
-			//Check if the item is hitting the entity
-			Item item = Inventory.getItem(player.usedItemSlot());
-			Rectangle itemHitbox = item.getBounds();
-			
-			if(itemHitbox.intersects(entityHitbox)) {
-				
-				entity.damage(entity.getHP() - item.getMeleeDamage(), item,
-						player.getScrollX(), player.getScrollY());
-
-				if (entity.isDead())
-					player.addCoins(entity.getCoinValue());
-			}
-		}
-	}	
-	
-	buffer.setTransform(oldTransform);
-	ParticleGenerator.update(buffer);
-	
-	if(Menu.isVisible()) 
-	{
-		//Draw GUI
-		buffer.drawImage(Menu.closedInventory(), 
-			(int)Menu.getX(), (int)Menu.getY(), this);
-		
-		if(Inventory.getItem(0) != null)
-			buffer.drawImage(Inventory.getItem(0).getImage(), 80, 432, this);
-		
-		if(Inventory.getItem(1) != null)
-			buffer.drawImage(Inventory.getItem(1).getImage(), 130, 432, this);
-			
-		buffer.setColor(Color.BLACK);
-		
-		//Draw debug statistics
-		buffer.drawString("Zone: "+ zone, 500, 416);
-		buffer.drawString("Item Slot: "+ player.usedItemSlot(), 500, 432);
-		buffer.drawString("Tiles: "+ tiles.size(), 560, 416);
-		buffer.drawString("Vertical Line Crossed: "+ vLineCrossed, 300, 416);
-		buffer.drawString("Horizontal Line Crossed: "+ hLineCrossed, 300, 432);
-		buffer.drawString("Loaded Rooms: ", 300, 448);
-		
-		Menu.showHealthBar(player, buffer);
-		int x = 400, y = 448;
-		
-		for(int i = 0; i<256; i++) { 
-			if(loadedRooms[i]) {
-				if(x > 430) {x = 400; y += 12;}
-				buffer.drawString(Integer.toString(i), x, y);
-				x += 30;
-			}	
-		}
-		
-		if(player.isInventoryOpen())
-			Inventory.updateGUI(buffer);
 	}
-	
-	//Render buffer
-	buffer.setTransform(oldTransform);
-	g.drawImage(bufferImage, borderX, borderY, scaledWidth, scaledHeight, null);
-	g.dispose();
-	
-	}
-	Toolkit.getDefaultToolkit().sync();
-}
-	
-	
-@Override
-public void actionPerformed(ActionEvent e) 
-{
-	//Update things at the interval of a timer,
-	//before they are drawn.
-	buffer.setColor(background);
-	buffer.fillRect(0, 0, 640, 480);
-	checkIngameState();
-	checkCollisions();
-	updatePlayer();
-	updateEntities();
-	updateItem();
-	repaint();
-}
-	
-private void checkIngameState() {
-	if(!ingame)
-		timer.stop();
-}
-	
-public void checkCollisions() 
-{
-	Rectangle playerHitbox = player.getBounds();
-		
-	for(Tile tile : tiles) {	
-		
-	if(tile != null)
-	if(tile.getTX() > -1 && tile.getTX() < 640) 
-	{
-			
-		Rectangle tileHitbox = tile.getTBounds(player.getScrollX(), player.getScrollY());
-			
-		//This could be changed later to 
-		//"if (tile.emitsParticles = true), generator.addParticle(tile.getparticle)
-			
-		if(tile.getType() == 11) {
-			ParticleGenerator.add(ParticleFire.class, (int)(tile.getTX() + player.getScrollX()), (int)(tile.getTY() + player.getScrollY()), 1);
-		}
-			
-		if(playerHitbox.intersects(tileHitbox) && tile.isSolid()) 
-		{
-			if(tile.getType()==13) 
-			{
-				for(int i = 0; i < 256; i++)
-					loadedRooms[i] = false;
-				
-				//Calculate how many rooms the player traveled before touching a door
-				double yd = (player.getY()-player.getScrollY()-initialY) / 352;
-				int n1 = (int)yd;
-				zone += 16 * n1; 
-				double xd = (player.getX()-player.getScrollX()-initialX) / 640;
-				int n2 = (int)xd;
-				
-				zone += n2;
-				zone -= 16;
-				
-				initialX = (int) player.getX();
-				initialY = 300;
-				
-				player.setPosition(player.getX(), 300);
-				isTransitioning = true;
-			}
-			else if(tile.getType()==16) 
-			{
-				for(int i = 0; i < 256; i++)
-					loadedRooms[i] = false;
-				
-				//Calculate how many rooms the player traveled before touching a door
-				double yd = (player.getY()-player.getScrollY()-initialY) / 352;
-				int n1 = (int)yd;
-				zone += 16 * n1; 
-				double xd = (player.getX()-player.getScrollX()-initialX) / 640;
-				int n2 = (int)xd;
-				
-				zone += n2;
-				zone += 16;
-				
-				initialX = (int) player.getX();
-				initialY = 50;
-				
-				player.setPosition(player.getX(), 50);
-				isTransitioning = true;
-			}
-			else if(tile.getType()==17) 
-			{
-				for(int i = 0; i < 256; i++)
-					loadedRooms[i] = false;
-				
-				//Calculate how many rooms the player traveled before touching a door
-				double yd = (player.getY()-player.getScrollY()-initialY) / 352;
-				int n1 = (int)yd;
-				zone += 16 * n1; 
-				double xd = (player.getX()-player.getScrollX()-initialX) / 640;
-				int n2 = (int)xd;
-				
-				zone += n2;
-				zone++;
-				
-				initialX = 100;
-				initialY = (int) player.getY();
-				
-				player.setPosition(100, player.getY());
-				isTransitioning = true;
-			}
-			else if(tile.getType()==18) 
-			{
-				for(int i = 0; i<256; i++)
-					loadedRooms[i] = false;
-				
-				//Calculate how many rooms the player traveled before touching a door
-				double d = (player.getY()-player.getScrollY()-initialY) / 352;
-				int n = (int)d; 
-				zone += 16 * n; 
-				double xd = (player.getX()-player.getScrollX()-initialX) / 640;
-				int n2 = (int)xd;
-				
-				zone += n2;
-				zone--;
-				
-				initialX = 450;
-				initialY = (int) player.getY();
-				
-				player.setPosition(450, player.getY());
-				isTransitioning = true;
-			}
-		else
-			player.collideWithTile();
-		}
-	else
-		player.endTileCollision();	
-	}
-	}
-}
-	
-private void updatePlayer() 
-{
-	if(player.isVisible())
-		player.move();
-		
-	if(!player.isEnterAllowed())
-		player.setEnterKey(false);
-		
-	//Determine when to start scrolling
-	vLineCrossed = (
-		   player.getX() > player.getScrollX()+initialX + 144 
-		|| player.getX() < player.getScrollX()+initialX - 144);
 
-	hLineCrossed = (
-		   player.getY() > player.getScrollY()+initialY + 144 
-		|| player.getY() < player.getScrollY()+initialY - 144);
-		
-	player.setHLine(hLineCrossed);
-	player.setVLine(vLineCrossed);
-		
-	player.regen();
-}
-	
-
-private void updateEntities() 
-{
-	for(ListIterator<Entity> entityIterator = entities.listIterator(); entityIterator.hasNext();) 
-	{
-		Entity entity = entityIterator.next();
-		if(!isTransitioning) 
-		{
-			int currentRoomX = 0 + (int)(Math.floor(entity.getX() / 640));
-			int currentRoomY = 0 + (int)(Math.floor(entity.getY() / 352));
-				
-			double localX = entity.getX();
-			double localY = entity.getY();
-				
-			if(localX > 640)
-				localX = localX % 640;
-
-			else if(localX < 0)
-				localX = (localX % 640) + 640;
-				
-			if(localY > 352)
-				localY = localY % 352;
-
-			else if(localY < 0)
-				localY = (localY % 352) + 352;
-				
-			int location = (int)(( localX / 32)) + 20*(int)( localY /32);
-			Tile tile = new Tile((int)(entity.getX()), (int)(entity.getY()), 
-						
-			Tilemaps.getMapIndex
-				(zone + (currentRoomX + (16*currentRoomY)), location));
-					
-			if(tile != null) 
-			{
-				if(tile.isSolid())
-					entity.collideWithTile();
-				else
-					entity.setColliding(false);
-			}
-				
-			entity.performAI(
-					player.getX()-player.getScrollX(), 
-				player.getY()-player.getScrollY(), player.getDirection());
-				
-		}
-		if(entity.isDead())
-			entityIterator.remove();
-	}
-}
-	
 	private void updateItem()
 	{
 		if (player.isUsingItem()) {

@@ -23,8 +23,6 @@ public class Player extends Sprite {
 	private boolean downArrow;
 	private boolean enterKey;
 	private boolean allowEnter;
-	private double scrollX;
-	private double scrollY;
 	private int scrollingMode;
 	private int hp;
 	private int maxHp;
@@ -68,8 +66,6 @@ public class Player extends Sprite {
 		vScrollEnabled = false;
 		hLineCrossed   = false;
 		vLineCrossed   = false;
-		scrollX        = 0;
-		scrollY        = 0;
 		upArrow        = false;
 		downArrow      = false;
 		enterKey       = false;
@@ -85,90 +81,47 @@ public class Player extends Sprite {
 			if(forward && !colliding) {
 				moveX = moveSpeed * Math.cos(Math.toRadians(direction));
 				moveY = moveSpeed * Math.sin(Math.toRadians(direction));
-
 				oldX = moveX * -1.0;
 				oldY = moveY * -1.0;
-
-				if(hScrollEnabled && vLineCrossed)
-					scrollX -= moveX;
-				else
-					x += moveX;
-
-				if(vScrollEnabled && hLineCrossed)
-					scrollY -= moveY;
-				else
-					y += moveY;
+				x += moveX;
+				y += moveY;
 			}
 			if(backward && !colliding) {
 				moveX = moveSpeed * Math.cos(Math.toRadians(direction)) * -1.0;
 				moveY = moveSpeed * Math.sin(Math.toRadians(direction)) * -1.0;
-
 				oldX = moveX * -1.0;
 				oldY = moveY * -1.0;
-
-				if(hScrollEnabled && vLineCrossed)
-					scrollX -= moveX;
-				else
-					x += moveX;
-
-				if(vScrollEnabled && hLineCrossed)
-					scrollY -= moveY;
-				else
-					y += moveY;
+				x += moveX;
+				y += moveY;
 			}
-			if(left && strafe && !forward && !backward)
-			{
+			if(left && strafe && !forward && !backward) {
 				moveX = moveSpeed * Math.cos(Math.toRadians(direction + 90)) * -1.0;
 				moveY = moveSpeed * Math.sin(Math.toRadians(direction + 90)) * -1.0;
-
 				oldX = moveX * -1.0;
 				oldY = moveY * -1.0;
-
-				if(hScrollEnabled && vLineCrossed)
-					scrollX -= moveX;
-				else
-					x += moveX;
-				if(vScrollEnabled && hLineCrossed)
-					scrollY -= moveY;
-				else
-					y += moveY;
+				x += moveX;
+				y += moveY;
 			}
-			else if (left)
-			{
-				if(direction == 360)
-					direction = 0;
-				else
-					direction -= rotationSpeed;
+			else if (left) {
+				direction = direction == 360 ? 0 : direction - rotationSpeed;
 			}
 			if(right && strafe && !forward && !backward) {
 					moveX = moveSpeed * Math.cos(Math.toRadians(direction - 90)) * -1.0;
 					moveY = moveSpeed * Math.sin(Math.toRadians(direction - 90)) * -1.0;
-
 					oldX = moveX * -1.0;
 					oldY = moveY * -1.0;
-
-					if(hScrollEnabled && vLineCrossed)
-						scrollX -= moveX;
-					else
-						x += moveX;
-
-					if(vScrollEnabled && hLineCrossed)
-						scrollY -= moveY;
-					else
-						y += moveY;
+					x += moveX;
+					y += moveY;
 			}
 			else if (right) {
-				if(direction == 360)
-					direction = 0;
-				else
-					direction += rotationSpeed;
+				direction = direction == 360 ? 0 : direction + rotationSpeed;
 			}
-			if(use)
-				useImage(playerMovingAttack);
-			else
-				useImage(playerMoving);
+			useImage(use ? playerMovingAttack : playerMoving);
 		}
-
+		else {
+//			oldX = x;
+//			oldY = y;
+		}
 		if(!left && !right && !forward && !backward)
 		{
 			if(use)
@@ -220,7 +173,7 @@ public class Player extends Sprite {
 			break;
 
 		case KeyEvent.VK_ESCAPE:
-			inventoryOpen = true;
+			inventoryOpen = !inventoryOpen;
 			break;
 
 		case KeyEvent.VK_UP:
@@ -280,10 +233,6 @@ public class Player extends Sprite {
 			use = false;
 			break;
 
-		case KeyEvent.VK_ESCAPE:
-			inventoryOpen = false;
-			break;
-
 		case KeyEvent.VK_UP:
 			upArrow = false;
 			break;
@@ -341,16 +290,18 @@ public class Player extends Sprite {
 	 */
 	public void collideWithTile() {
 		colliding = true;
-		if(hScrollEnabled && vLineCrossed) {
-			scrollX -= oldX;
-		}
-		else
-			x += oldX;
-		if(vScrollEnabled && hLineCrossed) {
-			scrollY -= oldY;
-		}
-		else
-			y += oldY;
+		x += oldX;
+		y += oldY;
+//		if(hScrollEnabled && vLineCrossed) {
+//			scrollX -= oldX;
+//		}
+//		else
+//			x += oldX;
+//		if(vScrollEnabled && hLineCrossed) {
+//			scrollY -= oldY;
+//		}
+//		else
+//			y += oldY;
 	}
 	
 	public void endTileCollision() {
@@ -360,47 +311,6 @@ public class Player extends Sprite {
 	public void setHit(boolean b) {
 		hit = b;
 	}
-
-	/**
-	 * Set player's coordinates
-	 * @param x X coordinate
-	 * @param y Y coordinate
-	 */
-	public void setPosition(double x, double y) {
-		this.x = x;
-		this.y = y;
-	}
-	
-	//Determine how the screen will scroll
-	public void setScrollingMode(int sm) {
-		scrollingMode = sm;
-		
-		switch(scrollingMode)
-		{
-		case 0: hScrollEnabled = false; vScrollEnabled = false;break;
-		case 1: hScrollEnabled = true; vScrollEnabled = false;break;
-		case 2: hScrollEnabled = false; vScrollEnabled = true;break;
-		case 3: hScrollEnabled = true; vScrollEnabled = true; break;
-		}
-	}
-	
-	public void setHLine(boolean isHLineCrossed) {
-		hLineCrossed = isHLineCrossed;
-
-	}
-	
-	public void setVLine(boolean isVLineCrossed) {
-		vLineCrossed = isVLineCrossed;
-
-	}
-	
-	public void setScrollX(int sx) {
-		scrollX = sx;
-	}
-	
-	public void setScrollY(int sy) {
-		scrollY = sy;
-	}
 	
 	public void setEnterKey(boolean b) {
 		enterKey = b;
@@ -409,30 +319,11 @@ public class Player extends Sprite {
 	public void allowEnterKey(boolean b) {
 		allowEnter = b;
 	}
-	
-	public boolean isScrollingEnabled() {
-		if(hScrollEnabled || vScrollEnabled)
-			return true;
-		else
-			return false;
-	}
 		
 	public boolean isColliding() {
 		return colliding;
 	}
-	
-	public int getScrollingMode() {
-		return scrollingMode;
-	}
-	
-	public double getScrollX() {
-		return scrollX;
-	}
-	
-	public double getScrollY() {
-		return scrollY;
-	}
-	
+
 	public double getMoveSpeed() {
 		return moveSpeed;
 	}
@@ -487,5 +378,17 @@ public class Player extends Sprite {
 	public void subtractCoins(int a)
 	{
 		coins -= a;
+	}
+
+	public double getDeltaX() {
+		return x - oldX;
+	}
+
+	public double getDeltaY() {
+		return y - oldY;
+	}
+
+	public void stopAnimating() {
+		useImage(playerIdle);
 	}
 }

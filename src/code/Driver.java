@@ -6,6 +6,7 @@ import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.io.IOException;
 
 @SuppressWarnings("unused")
 public class Driver extends JFrame{
@@ -19,8 +20,7 @@ public class Driver extends JFrame{
 	static GraphicsDevice device = GraphicsEnvironment
 		.getLocalGraphicsEnvironment().getScreenDevices()[0];
 	
-	public Driver()
-	{
+	public Driver() throws IOException {
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 	
 		int screenWidth = screenSize.width; 
@@ -64,8 +64,13 @@ public class Driver extends JFrame{
 	{
 		EventQueue.invokeLater(() ->
 		{
-			Driver driver = new Driver();
-			driver.setVisible(true);
+            Driver driver = null;
+            try {
+                driver = new Driver();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            driver.setVisible(true);
 		});
 	}
 }

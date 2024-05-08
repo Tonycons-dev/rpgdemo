@@ -45,7 +45,7 @@ public abstract class Entity extends Sprite {
 	 * Instantiate a derived class Entity with parameters
 	 * TODO: Refactor
 	 */
-	public static Entity NewEntity(int x, int y, int type, int aggro, double direction, int dNum, int hp) 
+	public static Entity newEntity(int x, int y, int type, int aggro, double direction, int dNum, int hp)
 	{
 		switch(type) {
 		case 1:

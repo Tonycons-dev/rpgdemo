@@ -1,6 +1,7 @@
 package code;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Collection;
 import java.util.List;
 import java.awt.Graphics2D;
 import java.util.LinkedList;
@@ -10,7 +11,7 @@ public class ParticleGenerator {
 
 
 	// REVISED: LinkedList is better because it allows fast removal of elements.
-	private static final List<Particle> particles = new LinkedList<>();
+	private static final Collection<Particle> particles = new LinkedList<>();
 
 	/**
 	 * Creates a particle with a random lifetime.
@@ -46,5 +47,12 @@ public class ParticleGenerator {
 				buffer.drawImage(p.getImage(), (int)p.getX(), (int)p.getY(), null);
 			}
 		}
+	}
+
+	/**
+	 * Removes all active particles.
+	 */
+	public static void clear() {
+		particles.clear();
 	}
 }

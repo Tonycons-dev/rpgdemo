@@ -127,7 +127,7 @@ public class Menu{
 		Font font = buffer.getFont();
 		FontMetrics metrics = buffer.getFontMetrics(font);
 		
-		int newPositions[] = wordWrap(xp, yp, x1, y1, x2, y2, buffer, word1, metrics);
+		int[] newPositions = wordWrap(xp, yp, x1, y1, x2, y2, buffer, word1, metrics);
 		buffer.setColor(c2);
 		
 		String[] word2 = arg2.split(" ");

@@ -12,15 +12,8 @@ public class Sprite {
 	protected int width;
 	protected int height;
 	protected int solid;
-	protected int type;
-
-	//precise coordinates
 	protected double x;
 	protected double y;
-
-	//coordinates for tiles
-	protected int tx;
-	protected int ty;
 	protected double moveX;
 	protected double moveY;
 	protected double oldX;
@@ -39,16 +32,6 @@ public class Sprite {
 	public Sprite(int x, int y) {
 		this.x = x;
 		this.y = y;
-		visible = true;
-	}
-
-	/**
-	 * TODO: Remove
-	 */
-	public Sprite(int tx, int ty, int type) {
-		this.tx = tx;
-		this.ty = ty;
-		this.type = type;
 		visible = true;
 	}
 
@@ -113,17 +96,27 @@ public class Sprite {
 	}
 
 	/**
-	 * TODO: Remove
+	 * Set coordinates
+	 * @param x X coordinate
+	 * @param y Y coordinate
 	 */
-	public int getTX() {
-		return tx;
+	public void setPosition(double x, double y) {
+		this.x = x;
+		this.y = y;
 	}
 
 	/**
-	 * TODO: Remove
+	 * Set x coordinate
 	 */
-	public int getTY() {
-		return ty;
+	public void setX(double x) {
+		this.x = x;
+	}
+
+	/**
+	 * Set y coordinate
+	 */
+	public void setY(double y) {
+		this.y = y;
 	}
 
 	/**
@@ -149,7 +142,7 @@ public class Sprite {
 	
 	//Used to get the bounds of a sprite when offset
 	public Rectangle getTBounds(double sx, double sy) {
-		return new Rectangle((int)sx + tx, (int)sy + ty, width, height); 
+		return new Rectangle((int)sx + (int)x, (int)sy + (int)y, width, height);
 	}
 
 	/**
