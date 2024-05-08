@@ -34,7 +34,7 @@ public class Player extends Sprite {
 	private boolean vScrollEnabled;
 	private boolean hLineCrossed;
 	private boolean vLineCrossed;
-	private int coins;
+	private static int coins;
 
 
 	static {
@@ -487,5 +487,14 @@ public class Player extends Sprite {
 	public void subtractCoins(int a)
 	{
 		coins -= a;
+	}
+
+	public static boolean trySubtractCoins(int a) {
+		int c = coins - a;
+		if (c < 0)
+			return false;
+
+		coins -= a;
+		return true;
 	}
 }

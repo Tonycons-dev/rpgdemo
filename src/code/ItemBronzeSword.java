@@ -1,15 +1,13 @@
 package code;
 
-import javax.swing.*;
-
-public class ItemSword extends Item
+public class ItemBronzeSword extends Item
 {
 	private int wOffset = -90;
 
 	/**
 	 * @see Item constructor
 	 */
-	public ItemSword(int x, int y) {
+	public ItemBronzeSword(int x, int y) {
 		super(x, y);
 		loadImage("ItemBasicSword.png");
 
@@ -33,5 +31,11 @@ public class ItemSword extends Item
 		wOffset += 10;
 		if(wOffset > 90)
 			wOffset = -90;
+	}
+
+	@Override
+	public int getCoinValue()
+	{
+		return 50;
 	}
 }

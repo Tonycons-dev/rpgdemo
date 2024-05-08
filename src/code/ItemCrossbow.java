@@ -32,4 +32,9 @@ public class ItemCrossbow extends Item {
 		y = yp + 24 * Math.sin(Math.toRadians(dr));
 		direction = dr;
 	}
+	@Override
+	public int getCoinValue()
+	{
+		return 200;
+	}
 }

@@ -157,15 +157,25 @@ public class Inventory {
      * Change the item in a given slot
      * TODO: Refactor
      */
-    public static void newItem(int type, int slot) {
+    public static void addItem(int type, int slot) {
 
         switch (type) {
             case 2:
                 items[slot] = new ItemCrossbow(-50, -50);
                 break;
             default:
-                items[slot] = new ItemSword(-50, -50);
+                items[slot] = new ItemBronzeSword(-50, -50);
                 break;
+        }
+    }
+
+    public static void addItem(Item item) {
+        for(int i = 0; i < items.length; i++)
+        {
+            if(items[i] == null)
+            {
+                items[i] = item;
+            }
         }
     }
 

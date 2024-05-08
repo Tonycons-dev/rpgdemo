@@ -29,44 +29,58 @@ public class Dialogue {
 
 	Descriptor d;
 	int f = 0;
+	int previous = 0;
 
 	// See https://github.com/google/gson/blob/main/UserGuide.md
 
-	public Dialogue(String str) {
+	public Dialogue(Player player, String str) {
 		var gson = new Gson();
 		d = gson.fromJson(str, Descriptor.class);
 
 		while(f!=-1)
 		{
-			step();
+			int o = new Scanner(System.in).nextInt()-1;
+			step(player, o);
 		}
-
-
-
 	}
 
-	public void step() {
+	public void step(Player player, int o) {
 		System.out.println("Descriptor:");
 		System.out.println(d.frames[f].text);
 		System.out.println();
 		for(int i = 0; i < d.frames[f].options.length; i++) {
 			System.out.println(d.frames[f].options[i].text);
 		}
-		int o = new Scanner(System.in).nextInt()-1;
 
-		if(d.frames[f].options[o].action.equals("sellShield"))
+
+		if(d.frames[f].options[o].action.equals("sellCrossbow"))
 		{
 			//add to inventory
-			Player.subtractCoins(200); //later check to make sure there's enough money
 			System.out.println("TEST");
-			f = d.frames[f].options[o].next;
+
+			if(!Shop.buyItem(0)) {
+				f = previous;
+			}
+			else
+			{
+				f = d.frames[f].options[o].next;
+				player.subtractCoins(200);
+				Inventory.addItem(Shop.returnItem(0));
+			}
 		}
-		else if(d.frames[f].options[o].action.equals("sellArrow"))
+		else if(d.frames[f].options[o].action.equals("sellSword"))
 		{
 			//add to inventory
-			Player.subtractCoins(100); //later check to make sure there's enough money
 			System.out.println("TEST 2");
-			f = d.frames[f].options[o].next;
+			if(!Shop.buyItem(1)) {
+				f = previous;
+			}
+			else
+			{
+				f = d.frames[f].options[o].next;
+				player.subtractCoins(100);
+				Inventory.addItem(Shop.returnItem(1));
+			}
 		}
 		else if(d.frames[f].options[o].action.equals("goBack"))
 		{
@@ -78,11 +92,6 @@ public class Dialogue {
 			f = d.frames[f].options[o].next;
 		}
 
-
-	}
-
-
-	public static void main(String[] args) throws IOException {
-		new Dialogue(Files.readString(Path.of(System.getProperty("user.dir") + "/src/Dialogues/Dialog1.json")));
+		previous = f;
 	}
 }

@@ -75,8 +75,8 @@ public Main(int scaleWidth, int scaleHeight, int screenWidth, int screenHeight)
 	initialX = PLAYER_X; 
 	initialY = PLAYER_Y;
 		
-	Inventory.newItem(1, 0);
-	Inventory.newItem(2, 1);
+	Inventory.addItem(1, 0);
+	Inventory.addItem(2, 1);
 		
 	timer = new Timer(DELAY, this);
 	timer.start();
