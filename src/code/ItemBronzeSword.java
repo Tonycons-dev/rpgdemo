@@ -9,7 +9,7 @@ public class ItemBronzeSword extends Item
 	 */
 	public ItemBronzeSword(int x, int y) {
 		super(x, y);
-		loadImage("ItemBasicSword.png");
+		loadImage("ItemBronzeSword.png");
 
 		meleeDamage = 3;
 		invTime = 20;
