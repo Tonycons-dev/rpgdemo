@@ -82,6 +82,20 @@ public class Dialogue {
 				Inventory.addItem(Shop.returnItem(1));
 			}
 		}
+		else if(d.frames[f].options[o].action.equals("sellKey"))
+		{
+			//add to inventory
+			System.out.println("TEST 3");
+			if(!Shop.buyItem(2)) {
+				f = previous;
+			}
+			else
+			{
+				f = d.frames[f].options[o].next;
+				player.subtractCoins(250);
+				Inventory.addItem(Shop.returnItem(2));
+			}
+		}
 		else if(d.frames[f].options[o].action.equals("goBack"))
 		{
 			//add to inventory

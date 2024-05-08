@@ -7,11 +7,13 @@ public class Shop {
     private static List<Item> items;
     private static Item is = new ItemIronSword(-50, -50);
     private static Item cb = new ItemCrossbow(-50, -50);
+    //private static Item k = new Key(-50,-50);
 
     public Shop() {
         items = new LinkedList<>();
         items.add(cb);
         items.add(is);
+        //items.add(k);
     }
 
     public static boolean buyItem(int i) {
