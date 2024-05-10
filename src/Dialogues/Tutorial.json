@@ -1,0 +1,14 @@
+{
+    "frames": [
+      {
+        "text": "Welcome to our RPG demo!\nDefeat the guards for coins. Interact with the merchant for upgrades. The merchant can be found to the right of this room.",
+        "options": [
+          {
+            "text": "OK",
+            "action": "quit",
+            "next": -1
+          }
+        ]
+      }
+    ]
+}

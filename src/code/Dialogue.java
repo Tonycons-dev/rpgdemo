@@ -3,9 +3,9 @@ package code;
 import com.google.gson.*;
 
 import java.awt.event.KeyEvent;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.security.Key;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 
 public class Dialogue {
@@ -13,99 +13,113 @@ public class Dialogue {
 	public static class Descriptor {
 		public static class Frame {
 			public static class Option {
-				private String text;
-				private String action;
-				private int next;
+				public String text;
+				public String action;
+				public int next;
 
 				public Option() {}
 			}
-			private  String text;
-			private Option[] options;
+			public String text;
+			public Option[] options;
 
 			public Frame() {}
 		}
 		private Frame[] frames;
 	}
 
-	Descriptor d;
-	int f = 0;
-	int previous = 0;
+	public Descriptor d;
+	private int f = 0;
+	private int previous = 0;
+
+	public final String name;
 
 	// See https://github.com/google/gson/blob/main/UserGuide.md
 
-	public Dialogue(Player player, String str) {
+	public Dialogue(String name, Player player, String str) {
+		this.name = name;
 		var gson = new Gson();
 		d = gson.fromJson(str, Descriptor.class);
 
-		while(f!=-1)
+//		while(f!=-1)
+//		{
+//			int o = new Scanner(System.in).nextInt()-1;
+//			step(player, o);
+//		}
+	}
+
+	private void buyItem(Player player, int o) {
+		if(Shop.buyItem(player, o)) {
+			f = 1;
+		}
+		else
 		{
-			int o = new Scanner(System.in).nextInt()-1;
-			step(player, o);
+			f = 2;
 		}
 	}
 
 	public void step(Player player, int o) {
-		System.out.println("Descriptor:");
-		System.out.println(d.frames[f].text);
-		System.out.println();
-		for(int i = 0; i < d.frames[f].options.length; i++) {
-			System.out.println(d.frames[f].options[i].text);
-		}
+		if (f == -1)
+			return;
 
-
-		if(d.frames[f].options[o].action.equals("sellCrossbow"))
+		o -= 1;
+		if (o >= d.frames[f].options.length)
+			return;
+		if(d.frames[f].options[o].action.equals("goBack"))
 		{
-			//add to inventory
-			System.out.println("TEST");
-
-			if(!Shop.buyItem(0)) {
-				f = previous;
-			}
-			else
+			f = previous;
+		}
+		else {
+			previous = f;
+			if(d.frames[f].options[o].action.equals("sellCrossbow"))
 			{
-				f = d.frames[f].options[o].next;
-				player.subtractCoins(200);
-				Inventory.addItem(Shop.returnItem(0));
+				buyItem(player, 0);
 			}
-		}
-		else if(d.frames[f].options[o].action.equals("sellSword"))
-		{
-			//add to inventory
-			System.out.println("TEST 2");
-			if(!Shop.buyItem(1)) {
-				f = previous;
-			}
-			else
+			else if(d.frames[f].options[o].action.equals("sellSword"))
 			{
-				f = d.frames[f].options[o].next;
-				player.subtractCoins(100);
-				Inventory.addItem(Shop.returnItem(1));
+				buyItem(player, 1);
 			}
-		}
-		else if(d.frames[f].options[o].action.equals("sellKey"))
-		{
-			//add to inventory
-			System.out.println("TEST 3");
-			if(!Shop.buyItem(2)) {
-				f = previous;
-			}
-			else
+			else if(d.frames[f].options[o].action.equals("sellKey"))
 			{
-				f = d.frames[f].options[o].next;
-				player.subtractCoins(250);
-				Inventory.addItem(Shop.returnItem(2));
+				buyItem(player, 2);
 			}
-		}
-		else if(d.frames[f].options[o].action.equals("goBack"))
-		{
-			//add to inventory
-			f = 0;
-		}
-		else if(d.frames[f].options[o].action.equals("quit"))
-		{
-			f = d.frames[f].options[o].next;
+			else if(d.frames[f].options[o].action.equals("quit"))
+			{
+				f = -1;
+			}
+			else if (d.frames[f].options[o].action.equals("gameOver")) {
+				throw new GameOverException();
+			}
 		}
 
-		previous = f;
+	}
+
+	public void keyPressed(Player player, KeyEvent e)
+	{
+		final Map<Integer, Integer> keyCodeToInt = new HashMap<>();
+		keyCodeToInt.put(KeyEvent.VK_0, 0);
+		keyCodeToInt.put(KeyEvent.VK_1, 1);
+		keyCodeToInt.put(KeyEvent.VK_2, 2);
+		keyCodeToInt.put(KeyEvent.VK_3, 3);
+		keyCodeToInt.put(KeyEvent.VK_4, 4);
+		keyCodeToInt.put(KeyEvent.VK_5, 5);
+		keyCodeToInt.put(KeyEvent.VK_6, 6);
+		keyCodeToInt.put(KeyEvent.VK_7, 7);
+		keyCodeToInt.put(KeyEvent.VK_8, 8);
+		keyCodeToInt.put(KeyEvent.VK_9, 9);
+
+		Integer o = keyCodeToInt.get(e.getKeyCode());
+		if (o != null)
+			step(player, o);
+	}
+
+	public boolean isFinished() {
+		return f == -1;
+	}
+
+	public Descriptor.Frame getCurrentFrame() {
+		if (f < 0)
+			return null;
+
+		return d.frames[f];
 	}
 }

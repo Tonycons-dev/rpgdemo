@@ -4,24 +4,24 @@
             "text": " Welcome to our shop! Buy something.",
             "options": [
                 {
-                    "text": "Buy crossbow (200)",
+                    "text": "Buy crossbow (200 coins)",
                     "action": "sellCrossbow",
                     "next": 1
                 },
                 {
-                    "text": "Buy iron sword (100)",
+                    "text": "Buy iron sword (100 coins)",
                     "action": "sellSword",
                     "next": 1
                 },
                 {
-                    "text": "Buy key (250)",
+                    "text": "Buy key (250 coins)",
                     "action": "sellKey",
                     "next": 1
                 },
                 {
                     "text": "Goodbye.",
                     "action": "quit",
-                    "next": 0
+                    "next": -1
                 }
             ]
         },
@@ -30,22 +30,28 @@
             "options": [
                 {
                     "text": "Yes",
-                    "next": 1
+                    "action": "goBack",
+                    "next": 0
                 },
                 {
                     "text": "Goodbye.",
                     "action": "quit",
-                    "next": 0
+                    "next": -1
                 }
             ]
         },
         {
-            "text": " Out of coin... ",
+            "text": " Out of coin... Buy something else? ",
             "options": [
+                {
+                    "text": "Yes",
+                    "action": "goBack",
+                    "next": 0
+                },
                 {
                     "text": "Goodbye",
                     "action": "quit",
-                    "next": 0
+                    "next": -1
                 }
             ]
         }

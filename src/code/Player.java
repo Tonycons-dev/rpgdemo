@@ -391,4 +391,13 @@ public class Player extends Sprite {
 	public void stopAnimating() {
 		useImage(playerIdle);
 	}
+
+	public boolean trySubtractCoins(int a) {
+		int x = coins - a;
+		if (x < 0)
+			return false;
+
+		coins -= a;
+		return true;
+	}
 }

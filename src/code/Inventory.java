@@ -3,6 +3,7 @@ package code;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.util.Arrays;
 
 public class Inventory {
 
@@ -94,8 +95,9 @@ public class Inventory {
                 //The second time enter is pressed, select where to move the item
                 //Returns cursor to normal
                 if(selectedItem != null) {
+                    // Swap the items
+                    items[oldSlot] = items[invSlot];
                     items[invSlot] = selectedItem;
-                    //inventoryItems[oldSlot] = null;
                 }
                 cursorImage = itemCursor;
                 showCursor1 = false;
@@ -175,11 +177,16 @@ public class Inventory {
             if(items[i] == null)
             {
                 items[i] = item;
+                return;
             }
         }
     }
 
     public static Item getItem(int index) {
         return items[index];
+    }
+
+    public static void reset() {
+        Arrays.fill(items, null);
     }
 }

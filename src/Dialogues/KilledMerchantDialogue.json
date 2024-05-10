@@ -1,0 +1,14 @@
+{
+  "frames": [
+    {
+      "text": "GAME OVER! You attacked the merchant.",
+      "options": [
+        {
+          "text": "OK",
+          "action": "gameOver",
+          "next": -1
+        }
+      ]
+    }
+  ]
+}

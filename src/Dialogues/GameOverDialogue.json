@@ -1,0 +1,14 @@
+{
+  "frames": [
+    {
+      "text": "GAME OVER! You died.",
+      "options": [
+        {
+          "text": "OK",
+          "action": "gameOver",
+          "next": -1
+        }
+      ]
+    }
+  ]
+}

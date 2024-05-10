@@ -11,10 +11,8 @@ import java.io.IOException;
 import java.io.Serial;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.*;
 import java.util.List;
-import java.util.ListIterator;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 import com.google.gson.*;
@@ -23,19 +21,13 @@ public class Main extends JPanel implements ActionListener {
 	
 	@Serial
 	private static final long serialVersionUID = 1L;
-	private final int PLAYER_X = 32;
-	private final int PLAYER_Y = 288;
-    private int initialX;
-	private int initialY;
-	private int offsetX;
-	private int offsetY;
-	private int scaledWidth, scaledHeight;
-	private int borderX, borderY;
+	private final int scaledWidth;
+    private final int scaledHeight;
+	private final int borderX;
+    private final int borderY;
 	private boolean ingame;
-	private boolean hLineCrossed;
-	private boolean vLineCrossed;
 	private final Timer timer;
-	private final Player player;
+	private Player player;
 	private final BufferedImage bufferImage;
 	private final Graphics2D buffer;
 	private final Color background;
@@ -47,15 +39,30 @@ public class Main extends JPanel implements ActionListener {
 	// The current level of transparency in the fade transition
 	private float fadeTransparency;
 
+	private Stack<Dialogue> dialogues = new Stack<>();
 
 	private static class StartLocation {
 		private String start;
 		private int[] position;
 	};
 
+	public void restartGame() throws IOException {
+
+		ingame = true;
+
+		dialogues.clear();
+
+		var start = new Gson().fromJson(
+				Files.readString(Path.of(System.getProperty("user.dir") + "/src/Maps/start.json")), StartLocation.class);
+
+		player = new Player(start.position[0], start.position[1]);
+		room = new Room(Files.readString(Path.of(System.getProperty("user.dir") + "/src/Maps/" + start.start + ".json")));
+
+		Inventory.reset();
+		Inventory.addItem(1, 0);
+	}
+
 	public Main(int scaleWidth, int scaleHeight, int screenWidth, int screenHeight) throws IOException {
-		//Initialize arrays
-		Tilemaps.init();
 		addKeyListener(new Adapter());
 
 		background = new Color(87, 86, 84);
@@ -67,19 +74,8 @@ public class Main extends JPanel implements ActionListener {
 		buffer = bufferImage.createGraphics();
 		buffer.setColor(background);
 		buffer.fillRect(0, 0, 640, 480);
-		ingame = true;
 
-		var start = new Gson().fromJson(
-				Files.readString(Path.of(System.getProperty("user.dir") + "/src/Maps/start.json")), StartLocation.class);
-
-		player = new Player(start.position[0], start.position[1]);
-		initialX = start.position[0];
-		initialY = start.position[1];
-
-		room = new Room(Files.readString(Path.of(System.getProperty("user.dir") + "/src/Maps/" + start.start + ".json")));
-
-		Inventory.newItem(1, 0);
-		Inventory.newItem(2, 1);
+		restartGame();
 
         timer = new Timer(15, this);
 		timer.start();
@@ -89,8 +85,11 @@ public class Main extends JPanel implements ActionListener {
 
 		borderX = (screenWidth - scaleWidth) / 2;
 		borderY = (screenHeight - scaleHeight) / 2;
+	}
 
-		Tilemaps.clearMap();
+	public void tutorial()
+	{
+		startDialogue("Tutorial");
 	}
 
 	private void renderTiles() {
@@ -171,15 +170,13 @@ public class Main extends JPanel implements ActionListener {
 
 		buffer.setColor(Color.BLACK);
 
-		buffer.drawString("Item Slot: "+ player.usedItemSlot(), 500, 432);
-		buffer.drawString("Tiles: "+ room.getTiles().size(), 560, 416);
-
 		buffer.drawString("WASD: Move: ", 300, 416);
 		buffer.drawString("SPACE: Item 1", 300, 432);
 		buffer.drawString("SHIFT: Item 2", 300, 448);
-		buffer.drawString("E: Inventory: ", 396, 416);
-		buffer.drawString("F: Interact: ", 396, 432);
-		buffer.drawString("M: Map:", 396, 448);
+		buffer.drawString("E: Inventory ", 396, 416);
+		buffer.drawString("F: Interact ", 396, 432);
+		buffer.drawString("G: Guide", 396, 448);
+		buffer.drawString("Coins: " + player.getCoins(),  512, 416);
 
 		Menu.showHealthBar(player, buffer);
 
@@ -239,6 +236,8 @@ public class Main extends JPanel implements ActionListener {
 		renderPlayer();
 		renderEntities();
 		renderParticles();
+		renderDialogues();
+		LevelMap.render(buffer, this);
 
 		// We don't want the menu to get scrolled
 		buffer.setTransform(oldTransform);
@@ -256,15 +255,24 @@ public class Main extends JPanel implements ActionListener {
 
 		checkIngameState();
 		checkCollisions();
-		updatePlayer();
+
+		if (dialogues.empty())
+			updatePlayer();
+
 		updateEntities();
 		updateItem();
 		repaint();
 	}
-	
+
 	private void checkIngameState() {
-		if(!ingame)
-			timer.stop();
+		if(!ingame) {
+			try {
+				// TODO
+				restartGame();
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+		}
 	}
 	
 	public void checkCollisions()
@@ -282,7 +290,7 @@ public class Main extends JPanel implements ActionListener {
 			Rectangle tileBounds = tile.getBounds();
 
 			if (tile.emitsParticle()) {
-				//ParticleGenerator.add(tile.getParticleClass(), (int)tile.getX(), (int)tile.getY(), 1);
+				ParticleGenerator.add(tile.getParticleClass(), (int)tile.getX(), (int)tile.getY(), 1);
 			}
 			if (!(playerBounds.intersects(tileBounds) && tile.isSolid())) {
 				player.endTileCollision();
@@ -337,6 +345,9 @@ public class Main extends JPanel implements ActionListener {
 		if(!player.isEnterAllowed())
 			player.setEnterKey(false);
 
+		if (player.getHP() <= 0)
+			startDialogue("GameOverDialogue");
+
 		player.regen();
 	}
 
@@ -369,14 +380,20 @@ public class Main extends JPanel implements ActionListener {
 					player.takeContactDamageFrom(entity);
 				}
 				else if(player.isInteracting()) {
+					entity.whenInteracted();
 					//If friendly, provide dialogue
-					Dialogue dialogue = Entity.getDialogue(entity.getDialogNumber());
+					//Dialogue dialogue = Entity.getDialogue(entity.getDialogNumber());
 					//dialogue.showDialog(player, buffer, 204, 111, 200, 130);
 				}
 			}
 			if(player.isUsingItem()) {
 				//Check if the item is hitting the entity
 				Item item = Inventory.getItem(player.usedItemSlot());
+
+				// If there's nothing in the slot of course don't use it
+				if (item == null)
+					continue;
+
 				Rectangle itemBounds = item.getBounds();
 
 				if(itemBounds.intersects(entityBounds)) {
@@ -399,7 +416,9 @@ public class Main extends JPanel implements ActionListener {
 			Inventory.updateCursor();
 		}
 	}
-	
+
+
+
 	private class Adapter extends KeyAdapter
 	{
 		@Override
@@ -408,8 +427,69 @@ public class Main extends JPanel implements ActionListener {
 		}
 		@Override
 		public void keyPressed(KeyEvent e) {
-			player.keyPressed(e);
-			Inventory.keyPressed(e);
+			try {
+				if (e.getKeyCode() == KeyEvent.VK_G) {
+					startDialogue("Tutorial");
+				}
+				player.keyPressed(e);
+				Inventory.keyPressed(e);
+				//LevelMap.keyPressed(e); Scrap this
+
+				if (!dialogues.empty()) {
+					dialogues.peek().keyPressed(player, e);
+
+					if (dialogues.peek().isFinished()) {
+						dialogues.pop();
+					}
+				}
+			} catch (GameOverException gameOver) {
+				ingame = false;
+			}
 		}
+	}
+
+
+	/**
+	 * Initiates a dialogue.
+	 * @param name File name relative to Dialogues folder
+	 */
+	public static void startDialogue(String name)
+	{
+		Main main = Driver.programMain;
+
+		for (Dialogue d : main.dialogues) {
+
+			// Cannot start a dialogue if it's already started
+			if (d.name.equals(name)) {
+				return;
+			}
+		}
+		try {
+			main.dialogues.push(new Dialogue(name, main.player,
+					Files.readString(Path.of(System.getProperty("user.dir") + "/src/Dialogues/" + name + ".json"))));
+		} catch (IOException e) {
+			throw new RuntimeException("Dialogue not found: " + name);
+		}
+	}
+
+	private void renderDialogues() {
+		if (dialogues.empty())
+			return;
+
+		Dialogue d = dialogues.peek();
+
+		var frame = d.getCurrentFrame();
+		if (frame == null)
+			return;
+
+		var sb = new StringBuilder();
+		sb.append(frame.text).append("\n\n");
+
+		int i = 1;
+		for (Dialogue.Descriptor.Frame.Option o : frame.options) {
+			sb.append("[").append(i).append("] ").append(o.text).append("\n\n");
+			i++;
+		}
+		Menu.showDialogBox(buffer, 64, 64, 512, 256, sb.toString());
 	}
 }

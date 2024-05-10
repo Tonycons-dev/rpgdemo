@@ -107,13 +107,4 @@ public class Room {
 
         return doors.get(new TileCoordinate((int)x, (int)y));
     }
-
-    /**
-     * If there is a door at (x, y), returns the location that
-     * player will start from after entering that room.
-     */
-    public Dimension getDoorExitPosition(double x, double y) {
-        return null;
-        // still not sure if i should do this
-    }
 }

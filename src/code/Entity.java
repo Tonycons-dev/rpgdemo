@@ -13,12 +13,6 @@ public abstract class Entity extends Sprite {
 	protected int invframe = 0;
 	protected boolean dead;
 
-	
-	//Dialogues that entities reference
-	private static Dialogue[] dialogs = {
-		new Dialogue("src/Dialogues/Dialog1.json")
-	};
-
 	/**
 	 * Entity constructor
 	 * @param x X coordinate
@@ -50,6 +44,8 @@ public abstract class Entity extends Sprite {
 		switch(type) {
 		case 1:
 			return new EntityGuard(x, y, aggro, direction, dNum, hp);
+		case 2:
+			return new EntityMerchant(x, y, aggro, direction, dNum, hp);
 		default:
 			return new EntityGuard(x, y, aggro, direction, dNum, hp);
 		}
@@ -63,6 +59,8 @@ public abstract class Entity extends Sprite {
 	 * @param targetDirection angle towards target position
 	 */
 	public abstract void performAI(double targetX, double targetY, double targetDirection);
+
+	public abstract void whenInteracted();
 
 	/**
 	 * Sets the health points
@@ -156,14 +154,6 @@ public abstract class Entity extends Sprite {
 	 */
 	public boolean isDead() {
 		return dead;
-	}
-
-	/**
-	 * @param index index
-	 * @return A segment of dialogue this entity uses
-	 */
-	public static Dialogue getDialogue(int index) {
-		return dialogs[index];
 	}
 
 	public abstract int getCoinValue();

@@ -20,11 +20,22 @@ public class EntityGuard extends Entity{
 		super(x, y, aggro, direction, dNum, hp);
 		useImage(guardIdle);
 		moveSpeed = 1;
+		dmg = 15;
+	}
+
+
+	/**
+	 * @see Entity whenInteracted
+	 */
+	@Override
+	public void whenInteracted() {
+
 	}
 
 	/**
 	 * @see Entity performAI
 	 */
+	@Override
 	public void performAI(double targetX, double targetY, double targetDirection) {
 		//A basic behavior where the entity moves towards the player.
 		

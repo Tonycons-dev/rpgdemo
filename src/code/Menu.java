@@ -42,9 +42,10 @@ public class Menu{
 		int size = metrics.stringWidth("A");
 		for(String s : word) 
 		{
-			if(xp + metrics.stringWidth(s) > x2 - 10)
-				xp = x1 + 16; yp += 15;
-
+			if(xp + metrics.stringWidth(s) > x2 - 10) {
+				xp = x1 + 16;
+				yp += 15;
+			}
 			if(yp > y2 - 5)
 				break;
 			
@@ -81,69 +82,87 @@ public class Menu{
 		
 		buffer.setColor(Color.BLACK);
 		
-		String[] word = text.split(" ");
-		
-		int xp = x1 + 16; int yp = y1 + 24;
-		
-		Font font = buffer.getFont();
-		FontMetrics metrics = buffer.getFontMetrics(font);
-		wordWrap(xp, yp, x1, y1, x2, y2, buffer, word, metrics);
-		
-		buffer.setColor(oldColor);
-	}
-	
-	public static void showDialogBox(int x, int y, int width, int height,
-	Graphics2D buffer, String arg1, Color c1, String arg2, Color c2, String arg3, Color c3) 
-	{
-		Color oldColor = buffer.getColor();
-		
-		buffer.setColor(Color.BLACK);
-		buffer.fillRect(x, y, width, height);
-		buffer.setColor(boxColor);
-		buffer.fillRect(x + 1, y + 1, width - 1, height - 1);
-		buffer.setColor(lineColor);
-		
-		int x1 = x + 5; 
-		int y1 = y + 5; 
-		int x2 = (x + width) - 5; 
-		int y2 = (y + height) - 5;
-		
-		buffer.drawLine(x1, y1, x2, y1);
-		buffer.drawLine(x2, y1, x2, y2);
-		buffer.drawLine(x2, y2, x1, y2);
-		buffer.drawLine(x1, y2, x1, y1);
-		
-		buffer.drawImage(menuTopLeft, x, y, null);
-		buffer.drawImage(menuTopRight, (x + width) - 20, y, null);
-		buffer.drawImage(menuBottomLeft, x, (y + height) - 20, null);
-		buffer.drawImage(menuBottomRight, (x + width) - 20, (y + height) - 20, null);
-		
-		buffer.setColor(c1);
-		String[] word1 = arg1.split(" ");
-		
-		int xp = x1 + 16; 
+		int xp = x1 + 16;
 		int yp = y1 + 24;
 		
 		Font font = buffer.getFont();
 		FontMetrics metrics = buffer.getFontMetrics(font);
-		
-		int[] newPositions = wordWrap(xp, yp, x1, y1, x2, y2, buffer, word1, metrics);
-		buffer.setColor(c2);
-		
-		String[] word2 = arg2.split(" ");
-		xp = x1 + 16; 
-		yp = newPositions[1] + 16;
-		
-		newPositions = wordWrap(xp, yp, x1, y1, x2, y2, buffer, word2, metrics);
-		buffer.setColor(c3);
-		
-		String[] word3 = arg3.split(" ");
-		xp = x1 + 16; 
-		yp = newPositions[1] + 16;
-		wordWrap(xp, yp, x1, y1, x2, y2, buffer, word3, metrics);
-		
+
+		int size = metrics.stringWidth("A");
+		for(String line : text.split("\n"))
+		{
+			for (String s : line.split(" ")) {
+				if(xp + metrics.stringWidth(s) > x2 - 10) {
+					xp = x1 + 16;
+					yp += 15;
+				}
+				if(yp > y2 - 5)
+					break;
+
+				buffer.drawString(s, xp, yp);
+				xp += metrics.stringWidth(s);
+
+				buffer.drawString(" ", xp, yp);
+				xp += size;
+			}
+			xp = x1 + 16;
+			yp += 15;
+		}
 		buffer.setColor(oldColor);
 	}
+	
+//	public static void showDialogBox(int x, int y, int width, int height,
+//	Graphics2D buffer, String arg1, Color c1, String arg2, Color c2, String arg3, Color c3)
+//	{
+//		Color oldColor = buffer.getColor();
+//
+//		buffer.setColor(Color.BLACK);
+//		buffer.fillRect(x, y, width, height);
+//		buffer.setColor(boxColor);
+//		buffer.fillRect(x + 1, y + 1, width - 1, height - 1);
+//		buffer.setColor(lineColor);
+//
+//		int x1 = x + 5;
+//		int y1 = y + 5;
+//		int x2 = (x + width) - 5;
+//		int y2 = (y + height) - 5;
+//
+//		buffer.drawLine(x1, y1, x2, y1);
+//		buffer.drawLine(x2, y1, x2, y2);
+//		buffer.drawLine(x2, y2, x1, y2);
+//		buffer.drawLine(x1, y2, x1, y1);
+//
+//		buffer.drawImage(menuTopLeft, x, y, null);
+//		buffer.drawImage(menuTopRight, (x + width) - 20, y, null);
+//		buffer.drawImage(menuBottomLeft, x, (y + height) - 20, null);
+//		buffer.drawImage(menuBottomRight, (x + width) - 20, (y + height) - 20, null);
+//
+//		buffer.setColor(c1);
+//		String[] word1 = arg1.split(" ");
+//
+//		int xp = x1 + 16;
+//		int yp = y1 + 24;
+//
+//		Font font = buffer.getFont();
+//		FontMetrics metrics = buffer.getFontMetrics(font);
+//
+//		int[] newPositions = wordWrap(xp, yp, x1, y1, x2, y2, buffer, word1, metrics);
+//		buffer.setColor(c2);
+//
+//		String[] word2 = arg2.split(" ");
+//		xp = x1 + 16;
+//		yp = newPositions[1] + 16;
+//
+//		newPositions = wordWrap(xp, yp, x1, y1, x2, y2, buffer, word2, metrics);
+//		buffer.setColor(c3);
+//
+//		String[] word3 = arg3.split(" ");
+//		xp = x1 + 16;
+//		yp = newPositions[1] + 16;
+//		wordWrap(xp, yp, x1, y1, x2, y2, buffer, word3, metrics);
+//
+//		buffer.setColor(oldColor);
+//	}
 	
 	public static void showHealthBar(Player player, Graphics2D buffer) 
 	{

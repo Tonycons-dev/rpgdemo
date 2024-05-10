@@ -1,8 +1,12 @@
 package code;
 
-public class Key extends Item {
-    public Key(int x, int y) {
+import javax.swing.*;
+
+public class ItemKey extends Item {
+
+    public ItemKey(int x, int y) {
         super(x, y);
+        loadImage("Key.png");
     }
     @Override
     public void useItem(double xp, double yp, int w, int h, double dr) {

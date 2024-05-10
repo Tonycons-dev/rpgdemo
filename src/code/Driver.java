@@ -14,7 +14,7 @@ public class Driver extends JFrame{
 	private static final boolean SCALE_ASPECT_RATIO = true;
 	private static final long serialVersionUID = 1L;
 	
-	private Main programMain;
+	public static Main programMain;
     private int scaledWidth, scaledHeight;
 	
 	static GraphicsDevice device = GraphicsEnvironment
@@ -40,6 +40,8 @@ public class Driver extends JFrame{
 		
 		programMain.setSize(screenWidth, screenHeight);
 		add(programMain);
+
+		programMain.tutorial();
 		
 		setTitle("Game"); 
 		setSize(screenWidth, screenHeight);
@@ -59,19 +61,31 @@ public class Driver extends JFrame{
 	    return new Dimension((int) (imageSize.width  * ratio),
 	                         (int) (imageSize.height * ratio));
 	}
-	
-	public static void main(String[] args)
-	{
+
+	public static void runGame() {
 		EventQueue.invokeLater(() ->
 		{
-            Driver driver = null;
-            try {
-                driver = new Driver();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-            driver.setVisible(true);
+			Driver driver = null;
+			try {
+				driver = new Driver();
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+			driver.setVisible(true);
 		});
+	}
+
+	public static void main(String[] args) {
+		while (true) {
+			try {
+				runGame();
+			} catch (GameOverException gameOver) {
+				continue;
+			}
+			break;
+		}
+
+
 	}
 }
 
