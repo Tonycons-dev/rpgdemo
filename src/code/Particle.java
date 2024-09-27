@@ -6,6 +6,9 @@ public abstract class Particle extends Sprite {
 	protected float velY;
 	protected float velX;
 
+	/**
+	 * Particle behavior function
+	 */
 	public abstract void update();
 
 	/**

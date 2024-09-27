@@ -4,7 +4,13 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class Shop {
-    private static final List<Item> items;
+
+
+    // Like this
+
+    private static List<Item> items = new LinkedList<>();
+
+    // Or like this (if you want to add things)
 
     static {
         items = new LinkedList<>();
@@ -12,6 +18,7 @@ public class Shop {
         items.add(new ItemIronSword(0, 0));
         items.add(new ItemKey(0, 0));
     }
+
 
     /**
      * Attempts to buy an item

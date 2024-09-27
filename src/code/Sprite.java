@@ -139,11 +139,6 @@ public class Sprite {
 	public Rectangle getBounds(){
 		return new Rectangle((int)x, (int)y, width, height);
 	}
-	
-	//Used to get the bounds of a sprite when offset
-	public Rectangle getTBounds(double sx, double sy) {
-		return new Rectangle((int)sx + (int)x, (int)sy + (int)y, width, height);
-	}
 
 	/**
 	 * Sets the sprite visible.

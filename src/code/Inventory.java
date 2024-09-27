@@ -177,7 +177,7 @@ public class Inventory {
             if(items[i] == null)
             {
                 items[i] = item;
-                return;
+                return; // Need the return here otherwise it'll fill all empty slots
             }
         }
     }

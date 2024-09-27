@@ -173,7 +173,7 @@ public class Main extends JPanel implements ActionListener {
 		buffer.drawString("WASD: Move: ", 300, 416);
 		buffer.drawString("SPACE: Item 1", 300, 432);
 		buffer.drawString("SHIFT: Item 2", 300, 448);
-		buffer.drawString("E: Inventory ", 396, 416);
+		buffer.drawString("Esc: Inventory ", 396, 416);
 		buffer.drawString("F: Interact ", 396, 432);
 		buffer.drawString("G: Guide", 396, 448);
 		buffer.drawString("Coins: " + player.getCoins(),  512, 416);

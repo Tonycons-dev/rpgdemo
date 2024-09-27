@@ -36,20 +36,16 @@ public abstract class Entity extends Sprite {
 	}
 
 	/**
-	 * Instantiate a derived class Entity with parameters
+	 * Creates an entity with parameters from map file
 	 * TODO: Refactor
 	 */
 	public static Entity newEntity(int x, int y, int type, int aggro, double direction, int dNum, int hp)
 	{
-		switch(type) {
-		case 1:
-			return new EntityGuard(x, y, aggro, direction, dNum, hp);
-		case 2:
-			return new EntityMerchant(x, y, aggro, direction, dNum, hp);
-		default:
-			return new EntityGuard(x, y, aggro, direction, dNum, hp);
-		}
-	}
+        if (type == 2) {
+            return new EntityMerchant(x, y, aggro, direction, dNum, hp);
+        }
+        return new EntityGuard(x, y, aggro, direction, dNum, hp);
+    }
 
 
 	/**
